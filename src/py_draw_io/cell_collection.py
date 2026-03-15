@@ -1,5 +1,5 @@
 """Module for the CellCollection class."""
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Iterator
 
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cells.cell import Cell
@@ -23,16 +23,16 @@ class CellCollection:
         else:
             self._data = data
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CellCollection[{len(self)} Elems]"
 
-    def __len__(self):
+    def __len__(self) -> int:
         def _get_length(cell: Cell) -> int:
             return 1 + sum([_get_length(x) for x in cell.children])
 
         return sum([_get_length(x) for x in self._data])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Cell]:
         return iter(self._data)
 
     def append(self, cell: Cell) -> None:

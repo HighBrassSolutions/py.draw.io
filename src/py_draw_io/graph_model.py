@@ -18,7 +18,7 @@ class GraphModel:
         self.page_width = page_width
         self.page_height = page_height
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"GraphModel(grid_size={self.grid_size}, page_width={self.page_width}, page_height={self.page_height})"
 
     def to_xml(self) -> Tag:

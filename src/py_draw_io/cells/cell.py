@@ -29,7 +29,7 @@ class Cell(Fittable):
         self.children = []
         self.contains_geometry = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"BasicCell {self.id}"
 
     def fits_inside(self, other: BoundaryContainer) -> bool:

@@ -1,4 +1,4 @@
-from typing import Union, List, Optional, Dict
+from typing import Union, List, Optional, Dict, Any
 from bs4 import Tag
 
 from py_draw_io.boundary_container import BoundaryContainer
@@ -23,14 +23,14 @@ class ArrowCell(Cell):
         self.waypoints = waypoints
         self.contains_geometry = True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.waypoints:
             middle = f"-> {' -> '.join([str(x) for x in self.waypoints])} ->"
         else:
             middle = "->"
         return f"ArrowCell({self.id})[{self.source} {middle} {self.target}]"
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ArrowCell):
             raise TypeError(f"Cannot compare ArrowCell with {type(other)}")
         if self.source != other.source:
@@ -102,14 +102,13 @@ class ArrowCell(Cell):
         if "edge" not in data.attrs:
             raise XmlDecodingError("Geometry is no Arrow")
 
+        source: Union[Cell, Point, None] = None
         if "source" in data.attrs:
             source = existing_cells.find_by_id(get_string_attribute(data, "source"))
-        else:
-            source = None
+
+        target: Union[Cell, Point, None] = None
         if "target" in data.attrs:
             target = existing_cells.find_by_id(get_string_attribute(data, "target"))
-        else:
-            target = None
 
         points = geometry_tag.find_all("mxPoint")
         waypoints = []

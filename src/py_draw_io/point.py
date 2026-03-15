@@ -11,15 +11,15 @@ class Point(Fittable):
         self.x = x
         self.y = y
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object):
         if not isinstance(other, Point):
             raise TypeError(f"Cannot compare Point with {type(other)}")
         return self.x == other.x and self.y == other.y
 
-    def __add__(self, other: Any) -> Point:
+    def __add__(self, other: object) -> Point:
         if not isinstance(other, Point):
             raise TypeError(f"Cannot perform addition of Point with {type(other)}")
         return Point(self.x + other.x, self.y + other.y)

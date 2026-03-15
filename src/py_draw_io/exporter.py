@@ -32,7 +32,7 @@ class DrawIoExporter:
         self._temp = temp_dir
         self._logger = logging.getLogger(self.__class__.__name__)
 
-    def _export(self, file: Path, page: str, out_path: Path):
+    def _export(self, file: Path, page: str, out_path: Path) -> None:
         export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
         return_code = os.system(export_com)
         if return_code != 0:
@@ -62,7 +62,7 @@ class DrawIoExporter:
         doc.save(file_path)
         return file_path
 
-    def _export_part_of_diagram(self, source: Path, page_name: str, out_path: Path, limit_export: str):
+    def _export_part_of_diagram(self, source: Path, page_name: str, out_path: Path, limit_export: str) -> None:
         temp_file = self._build_temp_file(source, page_name, limit_export)
 
         self._export(temp_file, page_name, out_path)

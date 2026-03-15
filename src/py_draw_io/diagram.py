@@ -22,7 +22,7 @@ class Diagram:
         self.cells = cells
         self.graph_model = graph_model
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Diagram({self.name}, {self.id}, {len(self.cells)} cells)"
 
     @classmethod
@@ -38,7 +38,7 @@ class Diagram:
         return Cell.from_xml(data, existing_cells)
 
     @classmethod
-    def _build_cells(cls, xml_cells: List[Tag], existing_cells: CellCollection):
+    def _build_cells(cls, xml_cells: List[Tag], existing_cells: CellCollection) -> None:
         failed_to_build = []
         for cell_data in xml_cells:
             try:

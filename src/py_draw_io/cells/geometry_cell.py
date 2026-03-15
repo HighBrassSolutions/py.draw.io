@@ -28,10 +28,10 @@ class GeometryCell(Cell, BoundaryContainer):
         self.bottom_right = bottom_right
         self.contains_geometry = True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"GeometryCell({self.id})[{self.top_left}/{self.bottom_right}]"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, GeometryCell):
             raise TypeError(f"Cannot compare geometry with {type(other)}")
         return self.top_left == other.top_left and self.bottom_right == other.bottom_right
