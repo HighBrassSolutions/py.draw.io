@@ -68,6 +68,16 @@ class DrawIoExporter:
         self._export(temp_file, page_name, out_path)
 
     def export(self, source: Path, page: str, out_path: Optional[Path], limit_export: Optional[str]) -> None:
+        """
+        Export the given diagram (or a part of it) into an image.
+
+        :param source: Location of the diagram to export
+        :param page: Name of the sheet to export
+        :param out_path: Full path to the output location
+        :param limit_export: If set to an ID of any object on the page, only arrows/geometries
+         enclosed by it will be exported
+        :return: None
+        """
         if out_path is None:
             out_path = self._create_default_path(page, limit_export)
         os.makedirs(out_path.parent, exist_ok=True)

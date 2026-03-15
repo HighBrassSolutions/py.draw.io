@@ -14,13 +14,15 @@ if TYPE_CHECKING:
 
 
 class GeometryCell(Cell, BoundaryContainer):
+    """Represents a cell containing a draw-io geometry."""
+
     top_left: Point
     bottom_right: Point
 
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]], value: Optional[str],
                  parent: Optional[Cell], top_left: Point, bottom_right: Point):
         """
-        Constructor for the ArrowCell class.
+        Create a new instance for the ArrowCell class.
 
         :param cell_id: ID of the cell
         :param style: Styling information for the cell
@@ -48,14 +50,17 @@ class GeometryCell(Cell, BoundaryContainer):
 
     @property
     def width(self) -> float:
+        """The width of the cell."""
         return self.bottom_right.x - self.top_left.x
 
     @property
     def height(self) -> float:
+        """The height of the cell."""
         return self.bottom_right.y - self.top_left.y
 
     @property
     def aspect_ratio(self) -> float:
+        """The aspect ratio of the cell."""
         return self.width / self.height
 
     def fits_inside(self, other: BoundaryContainer) -> bool:
@@ -68,6 +73,11 @@ class GeometryCell(Cell, BoundaryContainer):
         return self.top_left.fits_inside(other) and self.bottom_right.fits_inside(other)
 
     def to_xml(self) -> Tag:
+        """
+        Create an XML structure representing this class.
+
+        :return: The create XML tag
+        """
         base = super().to_xml()
         base.attrs["vertex"] = "1"
 
