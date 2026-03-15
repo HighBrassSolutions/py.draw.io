@@ -30,5 +30,16 @@ jobs:
           pip install poetry
           poetry install
 
-      - name: Run Unit Tests
-        run: poetry run mypy src/py_draw_io --xml-report=artifacts/mypy.xml
+      - name: Run mypy checks
+        run: poetry run mypy src/py_draw_io --txt-report=artifacts
+
+      - name: Show Report
+        run: cat artifacts/index.txt
+
+      - name: Check precision
+        run: |
+          imprecise=$(grep "Total" artifacts/index.txt | awk '{print $4}' | tr -d '%')
+          if (( $(echo "$imprecise > 0" | bc -l) )); then
+            echo "Mypy coverage is not 100% (imprecise: $imprecise%)"
+            exit 1
+          fi

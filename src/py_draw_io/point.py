@@ -14,7 +14,7 @@ class Point(Fittable):
     def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
 
-    def __eq__(self, other: object):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Point):
             raise TypeError(f"Cannot compare Point with {type(other)}")
         return self.x == other.x and self.y == other.y
