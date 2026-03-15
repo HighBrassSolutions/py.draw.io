@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Union, List, Optional, Dict, Any
 from bs4 import Tag
 
