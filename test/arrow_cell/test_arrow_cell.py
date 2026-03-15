@@ -2,6 +2,7 @@ import pytest
 
 from py_draw_io.cells.arrow_cell import ArrowCell
 from py_draw_io.point import Point
+from test.helpers import DummyBoundaryContainer
 
 
 def test_to_string():
@@ -62,3 +63,24 @@ def test_equals():
                               Point(30, 55),
                               Point(60, 77),
                               [Point(11, 12)])
+
+
+def test_fits_inside():
+    """Tests the 'fits_inside' method"""
+
+    arrow = ArrowCell("12test55", {}, "", None,
+                      Point(30, 55),
+                      Point(60, 77),
+                      [Point(100, 200)])
+
+    geo1 = DummyBoundaryContainer(Point(30, 55), Point(30, 55))
+    assert arrow.source.fits_inside(geo1)
+    assert not arrow.fits_inside(geo1)
+
+    geo2 = DummyBoundaryContainer(Point(60, 77), Point(60, 77))
+    assert arrow.target.fits_inside(geo2)
+    assert not arrow.fits_inside(geo2)
+
+    geo3 = DummyBoundaryContainer(Point(30, 55), Point(60, 77))
+    assert not arrow.waypoints[0].fits_inside(geo3)
+    assert arrow.fits_inside(geo3)

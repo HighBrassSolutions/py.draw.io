@@ -1,7 +1,7 @@
 import pytest
 
 from py_draw_io.point import Point
-from helpers import DummyBoundaryContainer
+from test.helpers import DummyBoundaryContainer
 
 
 def test_to_string():
