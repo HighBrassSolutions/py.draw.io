@@ -1,7 +1,6 @@
 from __future__ import annotations
 from .boundary_container import BoundaryContainer
 from .fittable import Fittable
-from typing import Any
 
 
 class Point(Fittable):

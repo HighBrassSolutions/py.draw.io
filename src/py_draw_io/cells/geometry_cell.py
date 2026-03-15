@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Optional, Dict, Union
+from typing import Optional, Dict, Union
 from bs4 import Tag
 from typing import TYPE_CHECKING
 
@@ -89,11 +89,11 @@ class GeometryCell(Cell, BoundaryContainer):
         if "vertex" not in data.attrs:
             raise XmlDecodingError("Geometry is no Geometry")
 
-        x = float(get_string_attribute(geometry_tag,"x", "0"))
+        x = float(get_string_attribute(geometry_tag, "x", "0"))
         if parent is not None and isinstance(parent, GeometryCell):
             x += parent.top_left.x
 
-        y = float(get_string_attribute(geometry_tag,"y", "0"))
+        y = float(get_string_attribute(geometry_tag, "y", "0"))
         if parent is not None and isinstance(parent, GeometryCell):
             y += parent.top_left.y
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union, List, Optional, Dict, Any
+from typing import Union, List, Optional, Dict
 from bs4 import Tag
 
 from py_draw_io.boundary_container import BoundaryContainer
@@ -120,20 +120,20 @@ class ArrowCell(Cell):
                 waypoints.append(point_obj)
             elif point_type == "sourcePoint":
                 if source is not None:
-                    raise XmlDecodingError(f"Arrow has more than one source defined")
+                    raise XmlDecodingError("Arrow has more than one source defined")
                 source = point_obj
             elif point_type == "targetPoint":
                 if target is not None:
-                    raise XmlDecodingError(f"Arrow has more than one target defined")
+                    raise XmlDecodingError("Arrow has more than one target defined")
                 target = point_obj
             else:
                 raise XmlDecodingError(f"Illegal point type: {point_type}")
 
         if source is None:
-            raise XmlDecodingError(f"Arrow has no source specified")
+            raise XmlDecodingError("Arrow has no source specified")
 
         if target is None:
-            raise XmlDecodingError(f"Arrow has no target specified")
+            raise XmlDecodingError("Arrow has no target specified")
         out = ArrowCell(cell_id, style, value, parent, source, target, waypoints)
 
         if parent is not None:

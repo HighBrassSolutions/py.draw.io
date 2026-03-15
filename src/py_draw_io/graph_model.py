@@ -1,6 +1,6 @@
+from __future__ import annotations
 from bs4 import Tag
 
-from py_draw_io.errors import XmlDecodingError
 from py_draw_io.helpers import get_string_attribute
 
 DEFAULT_ATTRS = {"grid": 1, "guides": 10, "tooltips": 1,
@@ -9,9 +9,9 @@ DEFAULT_ATTRS = {"grid": 1, "guides": 10, "tooltips": 1,
 
 
 class GraphModel:
-    gridSize: int
-    pageWidth: int
-    pageHeight: int
+    grid_size: int
+    page_width: int
+    page_height: int
 
     def __init__(self, grid_size: int, page_width: int, page_height: int) -> None:
         self.grid_size = grid_size
