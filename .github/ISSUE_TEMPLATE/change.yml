@@ -1,0 +1,51 @@
+name: Change Request
+description: File a Change Request
+labels: [ "enhancement" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this change request!
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please write down what should be changed.
+      placeholder: Tell us what should be changed. If applicable, you may describe this in a userstory.
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: What should the project look like to mark this task as done?
+      placeholder: Tell us what constitutes the DoD
+    validations:
+      required: true
+  - type: textarea
+    id: depends
+    attributes:
+      label: Definition of Ready
+      description: Are there any tickets, that need to be finished (or reach a certain state) before this task can be started, or are there any external dependencies??
+      placeholder: Insert links to any ticket this one depends on and describe what needs to be done
+      value: "/"
+    validations:
+      required: False
+  - type: textarea
+    id: reasoning
+    attributes:
+      label: Reason
+      description: Why are the proposed changes a net win for the project?
+      placeholder: Tell us why the changed should be made
+      value: "/"
+    validations:
+      required: False
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation
+      description: How should this be done?
+      placeholder: Tell us how you would make these changes
+      value: "/"
+    validations:
+      required: false

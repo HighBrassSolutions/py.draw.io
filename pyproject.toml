@@ -1,0 +1,37 @@
+[project]
+name = "py.draw.io"
+version = "0.1.0"
+description = "Allows for the creation, manipulation and export of draw.io diagrams in python"
+authors = [
+    { name = "Johannes Grothe", email = "johannesgrothe@proton.me" }
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "typer (>=0.24.0,<0.25.0)",
+    "beautifulsoup4 (>=4.14.2,<5.0.0)",
+    "lxml (>=6.0.2,<7.0.0)"
+]
+
+packages = [
+    { include = "py_draw_io", from = "src" }
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "src"
+]
+
+#[tool.poetry]
+#package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+test = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-coverage (>=0.0,<0.1)",
+    "mypy (>=1.19.1,<2.0.0)"
+]

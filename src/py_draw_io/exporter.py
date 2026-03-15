@@ -1,0 +1,78 @@
+import logging
+import os
+from pathlib import Path
+from typing import Optional
+
+from py_draw_io.document import Document
+
+DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
+DEFAULT_QUALITY = 5
+DEFAULT_TEMP_DIR = Path("temp")
+
+
+class ElementNotFoundError(Exception):
+    """Raised when trying to export an element that doesn't exist"""
+
+
+class ExportFailedError(Exception):
+    """Exception raised if the draw.io export command fails"""
+
+
+class DrawIoExporter:
+    _draw_io: Path
+    _quality: int
+    _temp: Path
+    _logger: logging.Logger
+
+    def __init__(self, draw_io: Path = DEFAULT_DRAWIO_LOCATION,
+                 quality: int = DEFAULT_QUALITY,
+                 temp_dir: Path = DEFAULT_TEMP_DIR):
+        self._draw_io = draw_io
+        self._quality = quality
+        self._temp = temp_dir
+        self._logger = logging.getLogger(self.__class__.__name__)
+
+    def _export(self, file: Path, page: str, out_path: Path):
+        export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
+        return_code = os.system(export_com)
+        if return_code != 0:
+            raise ExportFailedError(return_code)
+
+    def _create_default_path(self, page: str, limit_export: Optional[str]) -> Path:
+        out_path = self._temp
+        if limit_export:
+            out_path /= f"{page}__{limit_export}.png"
+        else:
+            out_path /= f"{page}.png"
+        return out_path
+
+    def _get_temp_diagram_path(self, source: Path, page_name: str, limit_export: str) -> Path:
+        source_file_name = Path(source).name.rstrip(".drawio").rstrip(".xml")
+        target_file_name = f"{source_file_name}_{page_name}_{limit_export}.drawio"
+        temp_file_path = self._temp / "diagrams" / target_file_name
+        os.makedirs(temp_file_path.parent, exist_ok=True)
+        return temp_file_path
+
+    def _build_temp_file(self, source: Path, page_name: str, limit_export: str) -> Path:
+        file_path = self._get_temp_diagram_path(source, page_name, limit_export)
+        doc = Document.load(source)
+        page = doc.get_diagram(page_name)
+        doc.diagrams = [page]
+        page.cells.remove_cells_outside_boundary(limit_export)
+        doc.save(file_path)
+        return file_path
+
+    def _export_part_of_diagram(self, source: Path, page_name: str, out_path: Path, limit_export: str):
+        temp_file = self._build_temp_file(source, page_name, limit_export)
+
+        self._export(temp_file, page_name, out_path)
+
+    def export(self, source: Path, page: str, out_path: Optional[Path], limit_export: Optional[str]) -> None:
+        if out_path is None:
+            out_path = self._create_default_path(page, limit_export)
+        os.makedirs(out_path.parent, exist_ok=True)
+
+        if limit_export is None:
+            self._export(source, page, out_path)
+        else:
+            self._export_part_of_diagram(source, page, out_path, limit_export)
