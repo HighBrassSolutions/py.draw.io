@@ -23,6 +23,14 @@ class Cell(Fittable):
 
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]],
                  value: Optional[str], parent: Optional[Cell]):
+        """
+        Constructor for the Cell class.
+
+        :param cell_id: ID of the cell
+        :param style: Styling information for the cell
+        :param value: Content of the cells text field
+        :param parent: Parent cell (if there is one)
+        """
         self.id = cell_id
         self.style = style
         self.value = value
@@ -34,6 +42,12 @@ class Cell(Fittable):
         return f"BasicCell {self.id}"
 
     def fits_inside(self, other: BoundaryContainer) -> bool:
+        """
+        Determine if this object is fully contained within the other one.
+
+        :param other: Container defining the boundary this object needs to be fully enclosed by
+        :return:
+        """
         return True
 
     def _encode_style(self) -> str:
@@ -101,6 +115,14 @@ class Cell(Fittable):
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> Cell:
+        """
+        Create a Cell from the given xml data.
+
+        :param data: XML tag to create the Cell from
+        :param existing_cells: Cells already parsed from the XML document
+        :return: The created Cell
+        :raises XmlDecodingError: If any of the required attributes is missing
+        """
         cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells)
         style = cls._decode_style(data)

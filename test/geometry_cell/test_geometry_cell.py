@@ -1,6 +1,6 @@
 import pytest
 
-from py_draw_io.cells.geometry_cell import GeometryCell
+from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.point import Point
 
 

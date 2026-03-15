@@ -2,10 +2,10 @@ from __future__ import annotations
 from typing import List
 from bs4 import Tag
 
-from py_draw_io.cells.cell import Cell
+from py_draw_io.cell import Cell
 from .cell_collection import CellCollection, CellNotFoundError
-from .cells.arrow_cell import ArrowCell
-from .cells.geometry_cell import GeometryCell
+from py_draw_io.arrow_cell import ArrowCell
+from py_draw_io.geometry_cell import GeometryCell
 from .errors import XmlDecodingError
 from .graph_model import GraphModel
 from .helpers import get_string_attribute
@@ -73,6 +73,13 @@ class Diagram:
 
     @classmethod
     def from_xml(cls, data: Tag) -> Diagram:
+        """
+        Create a Diagram from the given xml data.
+
+        :param data: XML tag to create the Diagram from
+        :return: The created Diagram
+        :raises XmlDecodingError: If any of the required attributes is missing
+        """
         model_data = data.find_all("mxGraphModel")
         if len(model_data) != 1:
             raise XmlDecodingError("found more or less than one model data")

@@ -1,6 +1,6 @@
 import pytest
 
-from py_draw_io.cells.arrow_cell import ArrowCell
+from py_draw_io.arrow_cell import ArrowCell
 from py_draw_io.point import Point
 from test.helpers import DummyBoundaryContainer
 

@@ -1,3 +1,4 @@
+"""Module for the ArrowCell class."""
 from __future__ import annotations
 from typing import Union, List, Optional, Dict
 from bs4 import Tag
@@ -7,10 +8,12 @@ from py_draw_io.cell_collection import CellCollection
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
 from py_draw_io.point import Point
-from py_draw_io.cells.cell import Cell
+from py_draw_io.cell import Cell
 
 
 class ArrowCell(Cell):
+    """Represents a Cell containing an Arrow."""
+
     source: Union[Cell, Point]
     target: Union[Cell, Point]
     waypoints: List[Point]
@@ -18,6 +21,17 @@ class ArrowCell(Cell):
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]],
                  value: Optional[str], parent: Optional[Cell],
                  source: Union[Cell, Point], target: Union[Cell, Point], waypoints: List[Point]):
+        """
+        Create a new instance of the ArrowCell class.
+
+        :param cell_id: ID of the cell
+        :param style: Styling information for the cell
+        :param value: Content of the cells text field
+        :param parent: Parent cell (if there is one)
+        :param source: Source of the arrow. Can either be another Cell or a Point
+        :param target: Target of the arrow. Can either be another Cell or a Point
+        :param waypoints: Additional points the arrow goes through between source and target
+        """
         super().__init__(cell_id, style, value, parent)
         self.source = source
         self.target = target
@@ -46,6 +60,12 @@ class ArrowCell(Cell):
         return True
 
     def fits_inside(self, other: BoundaryContainer) -> bool:
+        """
+        Determine if this object is fully contained within the other one.
+
+        :param other: Container defining the boundary this object needs to be fully enclosed by
+        :return:
+        """
         return self.source.fits_inside(other) and self.target.fits_inside(other)
 
     def to_xml(self) -> Tag:
@@ -88,6 +108,14 @@ class ArrowCell(Cell):
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> ArrowCell:
+        """
+        Create a ArrowCell from the given xml data.
+
+        :param data: XML tag to create the ArrowCell from
+        :param existing_cells: Cells already parsed from the XML document
+        :return: The created ArrowCell
+        :raises XmlDecodingError: If any of the required attributes is missing
+        """
         cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells)
         style = cls._decode_style(data)

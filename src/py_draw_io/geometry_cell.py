@@ -7,7 +7,7 @@ from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
 from py_draw_io.point import Point
-from py_draw_io.cells.cell import Cell
+from py_draw_io.cell import Cell
 
 if TYPE_CHECKING:
     from py_draw_io.cell_collection import CellCollection
@@ -19,6 +19,16 @@ class GeometryCell(Cell, BoundaryContainer):
 
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]], value: Optional[str],
                  parent: Optional[Cell], top_left: Point, bottom_right: Point):
+        """
+        Constructor for the ArrowCell class.
+
+        :param cell_id: ID of the cell
+        :param style: Styling information for the cell
+        :param value: Content of the cells text field
+        :param parent: Parent cell (if there is one)
+        :param top_left: Top left point of the geometry
+        :param bottom_right: Top botton right point of the geometry
+        """
         super().__init__(cell_id, style, value, parent)
         if top_left.x > bottom_right.x:
             raise ValueError("Top left point must be smaller than bottom right point")
@@ -49,6 +59,12 @@ class GeometryCell(Cell, BoundaryContainer):
         return self.width / self.height
 
     def fits_inside(self, other: BoundaryContainer) -> bool:
+        """
+        Determine if this object is fully contained within the other one.
+
+        :param other: Container defining the boundary this object needs to be fully enclosed by
+        :return:
+        """
         return self.top_left.fits_inside(other) and self.bottom_right.fits_inside(other)
 
     def to_xml(self) -> Tag:
@@ -74,6 +90,14 @@ class GeometryCell(Cell, BoundaryContainer):
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> GeometryCell:
+        """
+        Create a GeometryCell from the given xml data.
+
+        :param data: XML tag to create the GeometryCell from
+        :param existing_cells: Cells already parsed from the XML document
+        :return: The created GeometryCell
+        :raises XmlDecodingError: If any of the required attributes is missing
+        """
         cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells)
         style = cls._decode_style(data)

@@ -41,6 +41,13 @@ class Document:
 
     @classmethod
     def from_xml(cls, data: Tag) -> Document:
+        """
+        Create a Document from the given xml data.
+
+        :param data: XML tag to create the GraphModel from
+        :return: The created Document
+        :raises XmlDecodingError: If parsing fails for any reason
+        """
         diagrams = []
         for diagram_data in data.find_all("diagram"):
             diagrams.append(Diagram.from_xml(diagram_data))

@@ -34,8 +34,7 @@ test = [
     "pytest (>=9.0.2,<10.0.0)",
     "pytest-coverage (>=0.0,<0.1)",
     "mypy (>=1.19.1,<2.0.0)",
-    "flake8 (>=7.3.0,<8.0.0)",
-    "flake8-pyproject (>=1.2.4,<2.0.0)"
+    "ruff (>=0.15.6,<0.16.0)"
 ]
 
 [tool.mypy]
@@ -43,3 +42,16 @@ strict = true
 
 [tool.flake8]
 max-line-length = 120
+#docstring-convention = "sphinx"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# https://github.com/astral-sh/ruff/issues/6606
+select = ["E", "F", "D"]
+#select = ["E", "F"]
+ignore = ["D212", "D105"]
+
+[tool.ruff.lint.pydocstyle]
+#convention = "pep257"

@@ -2,7 +2,7 @@
 from typing import List, Optional, Union, Iterator
 
 from py_draw_io.boundary_container import BoundaryContainer
-from py_draw_io.cells.cell import Cell
+from py_draw_io.cell import Cell
 
 
 class CellNotFoundError(Exception):
@@ -15,9 +15,15 @@ class IllegalBoundaryError(Exception):
 
 class CellCollection:
     """Manages a list of cells and provides functions to manage it and all children of its elements recursively"""
+
     _data: List[Cell]
 
     def __init__(self, data: Optional[List[Cell]] = None):
+        """
+        Create a new instance of the CellCollection class.
+
+        :param data: Can be a list of cells to initialize the collection with some cells
+        """
         if data is None:
             self._data = []
         else:
@@ -37,7 +43,7 @@ class CellCollection:
 
     def append(self, cell: Cell) -> None:
         """
-        Appends a cell to the cell collection.
+        Append a cell to the cell collection.
 
         :param cell: Cell to append
         :return: None
@@ -46,7 +52,7 @@ class CellCollection:
 
     def find_by_id(self, cell_id: str) -> Cell:
         """
-        Searches the collection for cells with the given cell id recursively.
+        Search the collection for cells with the given cell id recursively.
 
         :param cell_id: ID to find a matching cell for
         :raises CellNotFoundError: If no cell was found for the given ID
@@ -71,7 +77,7 @@ class CellCollection:
 
     def remove_cells_outside_boundary(self, boundary: Union[BoundaryContainer, str]) -> None:
         """
-        Removes all cells outside the boundary from the cell collection.
+        Remove all cells outside the boundary from the cell collection.
         If a string is passed, a cell with a matching ID will be used.
 
         For cells with geometries, only the first parent gets checked, meaning if the parent does not fit the boundary,

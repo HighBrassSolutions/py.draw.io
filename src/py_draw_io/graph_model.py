@@ -1,3 +1,4 @@
+"""Module containing the GraphModel class."""
 from __future__ import annotations
 from bs4 import Tag
 
@@ -9,11 +10,20 @@ DEFAULT_ATTRS = {"grid": 1, "guides": 10, "tooltips": 1,
 
 
 class GraphModel:
+    """Represents a graph model."""
+
     grid_size: int
     page_width: int
     page_height: int
 
     def __init__(self, grid_size: int, page_width: int, page_height: int) -> None:
+        """
+        Create a new Instance of the GraphModel class.
+
+        :param grid_size: The grid size of the diagram
+        :param page_width: The width of the diagram page
+        :param page_height: The width of the diagram page
+        """
         self.grid_size = grid_size
         self.page_width = page_width
         self.page_height = page_height
@@ -22,6 +32,11 @@ class GraphModel:
         return f"GraphModel(grid_size={self.grid_size}, page_width={self.page_width}, page_height={self.page_height})"
 
     def to_xml(self) -> Tag:
+        """
+        Convert the GraphModel to a XML tag.
+
+        :return: The created XML tag
+        """
         out = Tag(name="mxGraphModel")
         out.attrs["gridSize"] = str(self.grid_size)
         out.attrs["pageWidth"] = str(self.page_width)
@@ -32,6 +47,13 @@ class GraphModel:
 
     @classmethod
     def from_xml(cls, data: Tag) -> GraphModel:
+        """
+        Create a GraphModel from the given xml data.
+
+        :param data: XML tag to create the GraphModel from
+        :return: The created GraphModel
+        :raises XmlDecodingError: If any of the required attributes is missing
+        """
         return cls(int(get_string_attribute(data, "gridSize")),
                    int(get_string_attribute(data, "pageWidth")),
                    int(get_string_attribute(data, "pageHeight")))
