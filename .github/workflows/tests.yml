@@ -18,7 +18,7 @@ jobs:
       - name: Run Unit Tests
         run: poetry run pytest --log-cli-level=INFO --junit-xml=artifacts/unit_tests.xml
 
-  mypy-checks:
+  type-checks:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,7 @@ jobs:
           pip install poetry
           poetry install
 
-      - name: Run mypy checks
+      - name: Run mypy type-checks
         run: poetry run mypy src/py_draw_io --txt-report=artifacts
 
       - name: Show Report
@@ -56,5 +56,5 @@ jobs:
           pip install poetry
           poetry install
 
-      - name: Run flake8 checks
+      - name: Run flake8 code-style-checks
         run: poetry run flake8 src/py_draw_io
