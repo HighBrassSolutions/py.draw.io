@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.errors import XmlDecodingError
+from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
 from py_draw_io.point import Point
 from py_draw_io.cells.cell import Cell
 
@@ -73,10 +74,10 @@ class GeometryCell(Cell, BoundaryContainer):
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> GeometryCell:
-        cell_id = data.attrs["id"]
+        cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells)
         style = cls._decode_style(data)
-        value = data.attrs.get("value")
+        value = get_optional_string_attribute(data, "value")
 
         geometry_data = data.find_all("mxGeometry")
         if len(geometry_data) > 1:
@@ -88,17 +89,17 @@ class GeometryCell(Cell, BoundaryContainer):
         if "vertex" not in data.attrs:
             raise XmlDecodingError("Geometry is no Geometry")
 
-        x = float(geometry_tag.attrs.get("x", 0))
+        x = float(get_string_attribute(geometry_tag,"x", "0"))
         if parent is not None and isinstance(parent, GeometryCell):
             x += parent.top_left.x
 
-        y = float(geometry_tag.attrs.get("y", 0))
+        y = float(get_string_attribute(geometry_tag,"y", "0"))
         if parent is not None and isinstance(parent, GeometryCell):
             y += parent.top_left.y
 
         top_left = Point(x, y)
-        bottom_right = Point(top_left.x + float(geometry_tag.attrs["width"]),
-                             top_left.y + float(geometry_tag.attrs["height"]))
+        bottom_right = Point(top_left.x + float(get_string_attribute(data, "width")),
+                             top_left.y + float(get_string_attribute(data, "height")))
 
         out = GeometryCell(cell_id, style, value, parent, top_left, bottom_right)
 

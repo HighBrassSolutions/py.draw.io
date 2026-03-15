@@ -7,6 +7,7 @@ from .cells.arrow_cell import ArrowCell
 from .cells.geometry_cell import GeometryCell
 from .errors import XmlDecodingError
 from .graph_model import GraphModel
+from .helpers import get_string_attribute
 
 
 class Diagram:
@@ -80,4 +81,4 @@ class Diagram:
         cls._build_cells(xml_cells, cells)
 
         root_cells = CellCollection([x for x in cells if x.parent is None])
-        return cls(data.attrs["name"], data.attrs["id"], root_cells, model)
+        return cls(get_string_attribute(data, "name"), get_string_attribute(data, "id"), root_cells, model)

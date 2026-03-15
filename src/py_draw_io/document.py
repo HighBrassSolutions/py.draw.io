@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup, Tag
 
 from .diagram import Diagram
 from .errors import XmlDecodingError
+from .helpers import get_string_attribute
 
 
 class DiagramNotFoundError(Exception):
@@ -42,7 +43,7 @@ class Document:
         diagrams = []
         for diagram_data in data.find_all("diagram"):
             diagrams.append(Diagram.from_xml(diagram_data))
-        return cls(diagrams, data.attrs["host"], data.attrs["agent"])
+        return cls(diagrams, get_string_attribute(data, "host"), get_string_attribute(data, "agent"))
 
     @classmethod
     def load(cls, path: Path) -> Document:

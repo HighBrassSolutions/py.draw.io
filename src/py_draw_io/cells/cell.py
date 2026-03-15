@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.fittable import Fittable
+from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
 
 if TYPE_CHECKING:
     from py_draw_io.cell_collection import CellCollection
@@ -66,7 +67,7 @@ class Cell(Fittable):
         if "style" not in data.attrs:
             return None
 
-        value = data.attrs["style"]
+        value = get_string_attribute(data, "style")
 
         parts = [x.split("=") for x in value.strip(";").split(";")]
         style = {}
@@ -77,7 +78,7 @@ class Cell(Fittable):
         if len(keywords) > 1:
             raise XmlDecodingError("More than one keyword detected")
         for key, raw_value in pairs:
-            final_value = raw_value
+            final_value: Union[int, str, None] = raw_value
             try:
                 final_value = int(raw_value)
             except ValueError:
@@ -99,10 +100,10 @@ class Cell(Fittable):
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> Cell:
-        cell_id = data.attrs["id"]
+        cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells)
         style = cls._decode_style(data)
-        value = data.attrs.get("value")
+        value = get_optional_string_attribute(data, "id")
 
         out = Cell(cell_id, style, value, parent)
 

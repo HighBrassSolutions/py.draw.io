@@ -1,6 +1,7 @@
 from bs4 import Tag
 
 from py_draw_io.errors import XmlDecodingError
+from py_draw_io.helpers import get_string_attribute
 
 DEFAULT_ATTRS = {"grid": 1, "guides": 10, "tooltips": 1,
                  "connect": 1, "arrows": 1, "fold": 1, "page": 1,
@@ -31,18 +32,6 @@ class GraphModel:
 
     @classmethod
     def from_xml(cls, data: Tag) -> GraphModel:
-        grid_size = data.attrs["gridSize"]
-        if not isinstance(grid_size, str):
-            raise XmlDecodingError("'gridSize' attribute must be a string'")
-
-        page_width = data.attrs["pageWidth"]
-        if not isinstance(page_width, str):
-            raise XmlDecodingError("'pageWidth' attribute must be a string'")
-
-        page_height = data.attrs["pageHeight"]
-        if not isinstance(page_height, str):
-            raise XmlDecodingError("'pageHeight' attribute must be a string'")
-
-        return cls(int(grid_size),
-                   int(page_width),
-                   int(page_height))
+        return cls(int(get_string_attribute(data, "gridSize")),
+                   int(get_string_attribute(data, "pageWidth")),
+                   int(get_string_attribute(data, "pageHeight")))

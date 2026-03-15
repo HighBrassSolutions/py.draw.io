@@ -4,6 +4,7 @@ from bs4 import Tag
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cell_collection import CellCollection
 from py_draw_io.errors import XmlDecodingError
+from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
 from py_draw_io.point import Point
 from py_draw_io.cells.cell import Cell
 
@@ -86,10 +87,10 @@ class ArrowCell(Cell):
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> ArrowCell:
-        cell_id = data.attrs["id"]
+        cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells)
         style = cls._decode_style(data)
-        value = data.attrs.get("value")
+        value = get_optional_string_attribute(data, "value")
 
         geometry_data = data.find_all("mxGeometry")
         if len(geometry_data) > 1:
@@ -102,18 +103,18 @@ class ArrowCell(Cell):
             raise XmlDecodingError("Geometry is no Arrow")
 
         if "source" in data.attrs:
-            source = existing_cells.find_by_id(data.attrs["source"])
+            source = existing_cells.find_by_id(get_string_attribute(data, "source"))
         else:
             source = None
         if "target" in data.attrs:
-            target = existing_cells.find_by_id(data.attrs["target"])
+            target = existing_cells.find_by_id(get_string_attribute(data, "target"))
         else:
             target = None
 
         points = geometry_tag.find_all("mxPoint")
         waypoints = []
         for point in points:
-            point_obj = Point(float(point.get("x")), float(point.get("y")))
+            point_obj = Point(float(get_string_attribute(point, "x")), float(get_string_attribute(point, "y")))
             point_type = point.get("as")
             if point_type is None:
                 waypoints.append(point_obj)
