@@ -1,3 +1,4 @@
+"""Module for the DrawIoExporter class and its Exceptions."""
 import logging
 import os
 from pathlib import Path
@@ -11,14 +12,16 @@ DEFAULT_TEMP_DIR = Path("temp")
 
 
 class ElementNotFoundError(Exception):
-    """Raised when trying to export an element that doesn't exist"""
+    """Raised when trying to export an element that doesn't exist."""
 
 
 class ExportFailedError(Exception):
-    """Exception raised if the draw.io export command fails"""
+    """Exception raised if the draw.io export command fails."""
 
 
 class DrawIoExporter:
+    """Handles the export of draw.io diagrams into png images."""
+
     _draw_io: Path
     _quality: int
     _temp: Path
@@ -27,18 +30,28 @@ class DrawIoExporter:
     def __init__(self, draw_io: Path = DEFAULT_DRAWIO_LOCATION,
                  quality: int = DEFAULT_QUALITY,
                  temp_dir: Path = DEFAULT_TEMP_DIR):
+        """
+        Create a new instance for the DrawIoExporter class.
+
+        :param draw_io: Path to the draw.io executable
+        :param quality: Quality index for the draw.io export. Can remain the default if no problems arise
+        :param temp_dir: Directory where temporary diagrams are stored that need to be created
+        if only a part of a diagram is to be exported
+        """
         self._draw_io = draw_io
         self._quality = quality
         self._temp = temp_dir
         self._logger = logging.getLogger(self.__class__.__name__)
 
     def _export(self, file: Path, page: str, out_path: Path) -> None:
+        """Export the given diagram using the draw.io executable."""
         export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
         return_code = os.system(export_com)
         if return_code != 0:
             raise ExportFailedError(return_code)
 
     def _create_default_path(self, page: str, limit_export: Optional[str]) -> Path:
+        """Create a default path for image exports based on the file name and exported area."""
         out_path = self._temp
         if limit_export:
             out_path /= f"{page}__{limit_export}.png"
@@ -47,6 +60,7 @@ class DrawIoExporter:
         return out_path
 
     def _get_temp_diagram_path(self, source: Path, page_name: str, limit_export: str) -> Path:
+        """Create a path for a temporary diagram based on the file/page name and exported area."""
         source_file_name = Path(source).name.rstrip(".drawio").rstrip(".xml")
         target_file_name = f"{source_file_name}_{page_name}_{limit_export}.drawio"
         temp_file_path = self._temp / "diagrams" / target_file_name
@@ -54,6 +68,7 @@ class DrawIoExporter:
         return temp_file_path
 
     def _build_temp_file(self, source: Path, page_name: str, limit_export: str) -> Path:
+        """Create a temporary diagram only containing the exported page with the specific elements wanted."""
         file_path = self._get_temp_diagram_path(source, page_name, limit_export)
         doc = Document.load(source)
         page = doc.get_diagram(page_name)
@@ -63,8 +78,8 @@ class DrawIoExporter:
         return file_path
 
     def _export_part_of_diagram(self, source: Path, page_name: str, out_path: Path, limit_export: str) -> None:
+        """Export only a part of a diagram."""
         temp_file = self._build_temp_file(source, page_name, limit_export)
-
         self._export(temp_file, page_name, out_path)
 
     def export(self, source: Path, page: str, out_path: Optional[Path], limit_export: Optional[str]) -> None:

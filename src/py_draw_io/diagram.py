@@ -1,3 +1,4 @@
+"""Module for the Diagram class."""
 from __future__ import annotations
 from typing import List
 from bs4 import Tag
@@ -12,12 +13,22 @@ from .helpers import get_string_attribute
 
 
 class Diagram:
+    """Represents a draw.io diagram with all its geometries and arrows."""
+
     name: str
     id: str
     cells: CellCollection
     graph_model: GraphModel
 
     def __init__(self, name: str, diagram_id: str, cells: CellCollection, graph_model: GraphModel) -> None:
+        """
+        Create a new instance of the Diagram class.
+
+        :param name: Name of the diagram
+        :param diagram_id: ID of the diagram
+        :param cells: Cells containing the diagrams geometries
+        :param graph_model: Graph model for the diagram
+        """
         self.name = name
         self.id = diagram_id
         self.cells = cells
@@ -28,6 +39,7 @@ class Diagram:
 
     @classmethod
     def _build_cell(cls, data: Tag, existing_cells: CellCollection) -> Cell:
+        """Create a fitting cell object from the given xml tag."""
         try:
             return ArrowCell.from_xml(data, existing_cells)
         except XmlDecodingError:
@@ -40,6 +52,11 @@ class Diagram:
 
     @classmethod
     def _build_cells(cls, xml_cells: List[Tag], existing_cells: CellCollection) -> None:
+        """
+        Create a list of cells from the given xml tags.
+
+        Recursively tries again should one cells parent not be available during creation.
+        """
         failed_to_build = []
         for cell_data in xml_cells:
             try:
@@ -53,6 +70,12 @@ class Diagram:
             cls._build_cells(failed_to_build, existing_cells)
 
     def to_xml(self) -> Tag:
+        """
+        Create an XML structure representing this class.
+
+        :return: The created XML tag
+        """
+
         def build_cells(cells: List[Cell]) -> List[Tag]:
             out_tags = []
             for cell_data in cells:

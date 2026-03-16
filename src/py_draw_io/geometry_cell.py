@@ -1,3 +1,4 @@
+"""Module for the GeometryCell."""
 from __future__ import annotations
 from typing import Optional, Dict, Union
 from bs4 import Tag
@@ -76,7 +77,7 @@ class GeometryCell(Cell, BoundaryContainer):
         """
         Create an XML structure representing this class.
 
-        :return: The create XML tag
+        :return: The created XML tag
         """
         base = super().to_xml()
         base.attrs["vertex"] = "1"

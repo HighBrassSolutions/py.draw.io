@@ -1,4 +1,4 @@
-"""Module for the BoundaryContainer class"""
+"""Module for the BoundaryContainer class."""
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class BoundaryContainer:
-    """Abstract class defining the interface for draw.io boundary checks"""
+    """Abstract class defining the interface for draw.io boundary checks."""
 
     top_left: Point
     bottom_right: Point

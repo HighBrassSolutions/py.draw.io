@@ -6,15 +6,15 @@ from py_draw_io.cell import Cell
 
 
 class CellNotFoundError(Exception):
-    """Raised if no cell was found in the search"""
+    """Raised if no cell was found in the search."""
 
 
 class IllegalBoundaryError(Exception):
-    """Raised if an illegal boundary is being used to remove cells outside boundaries"""
+    """Raised if an illegal boundary is being used to remove cells outside boundaries."""
 
 
 class CellCollection:
-    """Manages a list of cells and provides functions to manage it and all children of its elements recursively"""
+    """Manages a list of cells and provides functions to manage it and all children of its elements recursively."""
 
     _data: List[Cell]
 
@@ -60,7 +60,7 @@ class CellCollection:
         """
 
         def helper(data: List[Cell]) -> Optional[Cell]:
-            """Does the recursive searching"""
+            """Check the data for the wanted cell, try recursively with the children."""
             for cell in data:
                 if cell.id == cell_id:
                     return cell
@@ -78,8 +78,8 @@ class CellCollection:
     def remove_cells_outside_boundary(self, boundary: Union[BoundaryContainer, str]) -> None:
         """
         Remove all cells outside the boundary from the cell collection.
-        If a string is passed, a cell with a matching ID will be used.
 
+        If a string is passed, a cell with a matching ID will be used.
         For cells with geometries, only the first parent gets checked, meaning if the parent does not fit the boundary,
         it gets removed together with all children.
 

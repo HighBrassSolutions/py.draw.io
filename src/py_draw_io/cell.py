@@ -1,3 +1,4 @@
+"""Module for the Cell class."""
 from __future__ import annotations
 import copy
 from typing import Optional, Union, List, Dict
@@ -14,6 +15,8 @@ if TYPE_CHECKING:
 
 
 class Cell(Fittable):
+    """Represents a basic cell with no geometry and also works as parent class for all cells containing geometries."""
+
     id: str
     style: Optional[Dict[str, Union[int, str, None]]]
     value: Optional[str]
@@ -24,7 +27,7 @@ class Cell(Fittable):
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]],
                  value: Optional[str], parent: Optional[Cell]):
         """
-        Constructor for the Cell class.
+        Create a new instance of the Cell class.
 
         :param cell_id: ID of the cell
         :param style: Styling information for the cell
@@ -67,6 +70,11 @@ class Cell(Fittable):
         return out
 
     def to_xml(self) -> Tag:
+        """
+        Create an XML structure representing this class.
+
+        :return: The created XML tag
+        """
         out = Tag(name="mxCell")
         out.attrs["id"] = self.id
         if self.parent is not None:

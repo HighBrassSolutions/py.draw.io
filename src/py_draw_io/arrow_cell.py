@@ -69,6 +69,11 @@ class ArrowCell(Cell):
         return self.source.fits_inside(other) and self.target.fits_inside(other)
 
     def to_xml(self) -> Tag:
+        """
+        Create an XML structure representing this class.
+
+        :return: The created XML tag
+        """
         base = super().to_xml()
         base.attrs["edge"] = "1"
 

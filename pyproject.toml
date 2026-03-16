@@ -51,7 +51,7 @@ line-length = 120
 # https://github.com/astral-sh/ruff/issues/6606
 select = ["E", "F", "D"]
 #select = ["E", "F"]
-ignore = ["D212", "D105"]
+ignore = ["D212", "D105", "D203"]
 
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"

@@ -1,3 +1,4 @@
+"""Module for the Document class and its exceptions."""
 from __future__ import annotations
 import os
 from pathlib import Path
@@ -10,15 +11,24 @@ from .helpers import get_string_attribute
 
 
 class DiagramNotFoundError(Exception):
-    """Raised if no diagram with the given name or id was found"""
+    """Raised if no diagram with the given name or id was found."""
 
 
 class Document:
+    """Class representing a draw.io document."""
+
     diagrams: List[Diagram]
     host: str
     agent: str
 
     def __init__(self, diagrams: List[Diagram], host: str, agent: str):
+        """
+        Create a new instance for the Document class.
+
+        :param diagrams: Diagrams (Pages) contained in this document
+        :param host: Host as defined in the document header
+        :param agent: Agent as defined in the document header
+        """
         self.diagrams = diagrams
         self.host = host
         self.agent = agent
@@ -28,11 +38,11 @@ class Document:
 
     def get_diagram(self, identifier: str) -> Diagram:
         """
-        Gets a specific diagram from the file
+        Get a specific diagram from the file.
 
         :param identifier: Name or ID of the diagram to get
         :raises DiagramNotFoundError: If no diagram with the given name or id was found
-        :return: The diagram if found
+        :return: The diagram (if found)
         """
         for diagram in self.diagrams:
             if diagram.id == identifier or diagram.name == identifier:
@@ -56,7 +66,7 @@ class Document:
     @classmethod
     def load(cls, path: Path) -> Document:
         """
-        Loads the draw.io document from the specified path
+        Load the draw.io document from the specified path.
 
         :param path: Path to load the document from
         :return: The document as an object
@@ -71,6 +81,11 @@ class Document:
         return cls.from_xml(data)
 
     def to_xml(self) -> Tag:
+        """
+        Create an XML structure representing this class.
+
+        :return: The created XML tag
+        """
         out = Tag(name="mxfile")
         out.attrs["host"] = self.host
         out.attrs["agent"] = self.agent
@@ -81,7 +96,7 @@ class Document:
 
     def save(self, path: Path) -> None:
         """
-        Saves the document to the specified path
+        Save the document to the specified path.
 
         :param path: Path to save the document to
         :return: None
