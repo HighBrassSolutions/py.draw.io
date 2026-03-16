@@ -9,7 +9,7 @@ from py_draw_io.point import Point
 
 
 def test_missing_source():
-    """Tests the decoding of a cell with a missing source"""
+    """Test the decoding of a cell with a missing source"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -25,7 +25,7 @@ def test_missing_source():
 
 
 def test_missing_target():
-    """Tests the decoding of a cell with a missing target"""
+    """Test the decoding of a cell with a missing target"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -41,7 +41,7 @@ def test_missing_target():
 
 
 def test_existing_cell_as_target():
-    """Tests the decoding of a cell defined as target"""
+    """Test the decoding of a cell defined as target"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="" target="test2">
@@ -56,7 +56,7 @@ def test_existing_cell_as_target():
 
 
 def test_existing_point_as_target():
-    """Tests the decoding of a point defined as target"""
+    """Test the decoding of a point defined as target"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -73,7 +73,7 @@ def test_existing_point_as_target():
 
 
 def test_existing_cell_as_source():
-    """Tests the decoding of a cell defined as source"""
+    """Test the decoding of a cell defined as source"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="" source="test2">
@@ -89,7 +89,7 @@ def test_existing_cell_as_source():
 
 
 def test_existing_point_as_source():
-    """Tests the decoding of a point defined as source"""
+    """Test the decoding of a point defined as source"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -106,7 +106,7 @@ def test_existing_point_as_source():
 
 
 def test_cell_and_point_target():
-    """Tests the decoding of a cell with one point and one cell both defined as target"""
+    """Test the decoding of a cell with one point and one cell both defined as target"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="" target="test2">
@@ -124,7 +124,7 @@ def test_cell_and_point_target():
 
 
 def test_two_points_as_target():
-    """Tests the decoding of a cell with two points defined as target"""
+    """Test the decoding of a cell with two points defined as target"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -142,7 +142,7 @@ def test_two_points_as_target():
 
 
 def test_cell_and_point_source():
-    """Tests the decoding of a cell with one point and one cell both defined as source"""
+    """Test the decoding of a cell with one point and one cell both defined as source"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="" source="test2">
@@ -160,7 +160,7 @@ def test_cell_and_point_source():
 
 
 def test_two_points_as_source():
-    """Tests the decoding of a cell with two points defined as source"""
+    """Test the decoding of a cell with two points defined as source"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -201,7 +201,7 @@ def test_illegal_point_type():
 
 
 def test_waypoints():
-    """Tests the decoding of the waypoints specified for the arrow"""
+    """Test the decoding of the waypoints specified for the arrow"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" edge="1" style="">
@@ -226,7 +226,7 @@ def test_waypoints():
 
 
 def test_parent_mapping():
-    """Tests the correct decoding of the parent attribute and the linking between the two objects"""
+    """Test the correct decoding of the parent attribute and the linking between the two objects"""
 
     parent = ArrowCell("parent123", "", "", None, Point(1, 2), Point(4, 5), [])
     assert parent.children == []
@@ -252,7 +252,7 @@ def test_parent_mapping():
 
 
 def test_property_check_edge():
-    """Tests the raising of an error if no 'edge' property was found"""
+    """Test the raising of an error if no 'edge' property was found"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" style="">
@@ -274,7 +274,7 @@ def test_property_check_edge():
 
 
 def test_multiple_geometry_tags():
-    """Tests the raising of an error if multiple geometry tags were found"""
+    """Test the raising of an error if multiple geometry tags were found"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" style="">
@@ -290,7 +290,7 @@ def test_multiple_geometry_tags():
 
 
 def test_no_geometry_tags():
-    """Tests the raising of an error if no geometry tags were found"""
+    """Test the raising of an error if no geometry tags were found"""
 
     data = BeautifulSoup("""
         <mxCell id="test1" style="">

@@ -4,7 +4,7 @@ from py_draw_io.point import Point
 
 
 def test_edge_property_set():
-    """Tests the correct encoding of the 'edge' attribute"""
+    """Test the correct encoding of the 'edge' attribute"""
 
     arrow = ArrowCell("parent123", {}, "", None, Point(1, 2), Point(4, 5), [])
     data = arrow.to_xml()
@@ -13,7 +13,7 @@ def test_edge_property_set():
 
 
 def test_relative_property_set():
-    """Tests the correct encoding of the 'relative' attribute"""
+    """Test the correct encoding of the 'relative' attribute"""
 
     arrow = ArrowCell("parent123", {}, "", None, Point(1, 2), Point(4, 5), [])
     data = arrow.to_xml()
@@ -23,7 +23,7 @@ def test_relative_property_set():
 
 
 def test_point_source():
-    """Tests the correct encoding of a Point-source"""
+    """Test the correct encoding of a Point-source"""
 
     target = GeometryCell("target_cell", {}, "", None, Point(0, 0), Point(5, 5))
     source = Point(1, 2)
@@ -37,7 +37,7 @@ def test_point_source():
 
 
 def test_point_target():
-    """Tests the correct encoding of a Point-target"""
+    """Test the correct encoding of a Point-target"""
 
     target = Point(1, 2)
     source = GeometryCell("source_cell", {}, "", None, Point(0, 0), Point(5, 5))
@@ -51,7 +51,7 @@ def test_point_target():
 
 
 def test_cell_source():
-    """Tests the correct encoding of a Cell-source"""
+    """Test the correct encoding of a Cell-source"""
 
     target = Point(1, 2)
     source = GeometryCell("source_cell", {}, "", None, Point(0, 0), Point(5, 5))
@@ -65,7 +65,7 @@ def test_cell_source():
 
 
 def test_cell_target():
-    """Tests the correct encoding of a Cell-target"""
+    """Test the correct encoding of a Cell-target"""
 
     target = GeometryCell("target_cell", {}, "", None, Point(0, 0), Point(5, 5))
     source = Point(1, 2)
@@ -79,7 +79,7 @@ def test_cell_target():
 
 
 def test_waypoints():
-    """Tests the correct encoding of a Cell-target"""
+    """Test the correct encoding of a Cell-target"""
 
     target = GeometryCell("target_cell", {}, "", None, Point(0, 0), Point(5, 5))
     source = GeometryCell("source_cell", {}, "", None, Point(0, 0), Point(5, 5))

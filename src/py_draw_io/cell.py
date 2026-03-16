@@ -53,10 +53,9 @@ class Cell(Fittable):
         """
         return True
 
-    def _encode_style(self) -> str:
-        if self.style is None:
-            return ""
-        buf = copy.deepcopy(self.style)
+    @classmethod
+    def _encode_style(cls, style: Dict[str, Union[int, str, None]]) -> str:
+        buf = copy.deepcopy(style)
         geo_type = buf.pop("geometry_type", None)
         if geo_type is not None:
             out = f"{geo_type};"
@@ -82,7 +81,7 @@ class Cell(Fittable):
         if self.value is not None:
             out.attrs["value"] = self.value
         if self.style is not None:
-            out.attrs["style"] = self._encode_style()
+            out.attrs["style"] = self._encode_style(self.style)
         return out
 
     @classmethod
