@@ -125,7 +125,8 @@ class Cell(Fittable):
     def _decode_parent(cls, data: Tag, existing_cells: CellCollection) -> Optional[Cell]:
         if "parent" not in data.attrs:
             return None
-        return [x for x in existing_cells if x.id == data.attrs["parent"]][0]
+        parent_id = get_string_attribute(data, "parent")
+        return existing_cells.find_by_id(parent_id)
 
     @classmethod
     def from_xml(cls, data: Tag, existing_cells: CellCollection) -> Cell:
