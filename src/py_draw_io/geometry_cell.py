@@ -33,21 +33,16 @@ class GeometryCell(Cell, BoundaryContainer):
         :param bottom_right: Top botton right point of the geometry
         """
         super().__init__(cell_id, style, value, parent)
-        if top_left.x > bottom_right.x:
-            raise ValueError("Top left point must be smaller than bottom right point")
-        if top_left.y > bottom_right.y:
-            raise ValueError("Top left point must be smaller than bottom right point")
         self.top_left = top_left
         self.bottom_right = bottom_right
         self.contains_geometry = True
+        if self.top_left.x > self.bottom_right.x:
+            raise ValueError("Top left point must be smaller than bottom right point")
+        if self.top_left.y > self.bottom_right.y:
+            raise ValueError("Top left point must be smaller than bottom right point")
 
     def __repr__(self) -> str:
         return f"GeometryCell({self.id})[{self.top_left}/{self.bottom_right}]"
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, GeometryCell):
-            raise TypeError(f"Cannot compare geometry with {type(other)}")
-        return self.top_left == other.top_left and self.bottom_right == other.bottom_right
 
     @property
     def width(self) -> float:
@@ -137,7 +132,4 @@ class GeometryCell(Cell, BoundaryContainer):
                              top_left.y + float(get_string_attribute(data, "height")))
 
         out = GeometryCell(cell_id, style, value, parent, top_left, bottom_right)
-
-        if parent is not None:
-            parent.children.append(out)
         return out

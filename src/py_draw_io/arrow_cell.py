@@ -45,20 +45,6 @@ class ArrowCell(Cell):
             middle = "->"
         return f"ArrowCell({self.id})[{self.source} {middle} {self.target}]"
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, ArrowCell):
-            raise TypeError(f"Cannot compare ArrowCell with {type(other)}")
-        if self.source != other.source:
-            return False
-        if self.target != other.target:
-            return False
-        if len(self.waypoints) != len(other.waypoints):
-            return False
-        for waypoint in self.waypoints:
-            if waypoint not in other.waypoints:
-                return False
-        return True
-
     def fits_inside(self, other: BoundaryContainer) -> bool:
         """
         Determine if this object is fully contained within the other one.
@@ -167,8 +153,6 @@ class ArrowCell(Cell):
 
         if target is None:
             raise XmlDecodingError("Arrow has no target specified")
-        out = ArrowCell(cell_id, style, value, parent, source, target, waypoints)
 
-        if parent is not None:
-            parent.children.append(out)
+        out = ArrowCell(cell_id, style, value, parent, source, target, waypoints)
         return out

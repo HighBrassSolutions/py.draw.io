@@ -3,7 +3,7 @@ from py_draw_io.point import Point
 from test.helpers import DummyBoundaryContainer
 
 
-def test_repr():
+def test_to_string():
     cell = Cell("test_cell", None, "", None)
     assert "test_cell" in str(cell)
     assert repr(cell) == str(cell)

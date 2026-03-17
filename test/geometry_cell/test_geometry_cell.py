@@ -16,19 +16,6 @@ def test_to_string():
     assert repr(g) == str(g)
 
 
-def test_equals():
-    """Tests the equality operator."""
-
-    g = GeometryCell("33test99", "", "", None, Point(12, 55), Point(44, 77))
-
-    with pytest.raises(TypeError):
-        _ = g == 2
-
-    assert g == g
-    assert g != GeometryCell("33test99", "", "", None, Point(12, 55), Point(42, 77))
-    assert g != GeometryCell("33test99", "", "", None, Point(11, 55), Point(44, 77))
-
-
 def test_height():
     """Tests the height calculation"""
 

@@ -38,11 +38,18 @@ class Cell(Fittable):
         self.style = style
         self.value = value
         self.parent = parent
+        if self.parent is not None:
+            self.parent.children.append(self)
         self.children = []
         self.contains_geometry = False
 
     def __repr__(self) -> str:
         return f"BasicCell {self.id}"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+        return self.id == other.id
 
     def fits_inside(self, other: BoundaryContainer) -> bool:
         """
@@ -136,7 +143,4 @@ class Cell(Fittable):
         value = get_optional_string_attribute(data, "id")
 
         out = Cell(cell_id, style, value, parent)
-
-        if parent is not None:
-            parent.children.append(out)
         return out
