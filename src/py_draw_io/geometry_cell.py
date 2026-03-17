@@ -78,11 +78,9 @@ class GeometryCell(Cell, BoundaryContainer):
         base.attrs["vertex"] = "1"
 
         x = self.top_left.x
-        if isinstance(self.parent, GeometryCell):
-            x -= self.parent.top_left.x
-
         y = self.top_left.y
         if isinstance(self.parent, GeometryCell):
+            x -= self.parent.top_left.x
             y -= self.parent.top_left.y
 
         out = Tag(name="mxGeometry")
@@ -117,19 +115,18 @@ class GeometryCell(Cell, BoundaryContainer):
 
         geometry_tag = geometry_data[0]
         if "vertex" not in data.attrs:
-            raise XmlDecodingError("Geometry is no Geometry")
+            raise XmlDecodingError("Cell is no Geometry")
 
         x = float(get_string_attribute(geometry_tag, "x", "0"))
+        y = float(get_string_attribute(geometry_tag, "y", "0"))
+
         if parent is not None and isinstance(parent, GeometryCell):
             x += parent.top_left.x
-
-        y = float(get_string_attribute(geometry_tag, "y", "0"))
-        if parent is not None and isinstance(parent, GeometryCell):
             y += parent.top_left.y
 
         top_left = Point(x, y)
-        bottom_right = Point(top_left.x + float(get_string_attribute(data, "width")),
-                             top_left.y + float(get_string_attribute(data, "height")))
+        bottom_right = Point(top_left.x + float(get_string_attribute(geometry_tag, "width")),
+                             top_left.y + float(get_string_attribute(geometry_tag, "height")))
 
         out = GeometryCell(cell_id, style, value, parent, top_left, bottom_right)
         return out
