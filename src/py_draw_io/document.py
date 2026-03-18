@@ -6,12 +6,15 @@ from typing import List
 from bs4 import BeautifulSoup, Tag
 
 from .diagram import Diagram
-from .errors import XmlDecodingError
 from .helpers import get_string_attribute
 
 
 class DiagramNotFoundError(Exception):
     """Raised if no diagram with the given name or id was found."""
+
+
+class NoDrawioDocumentError(Exception):
+    """Raised if no diagram data was found inside the file."""
 
 
 class Document:
@@ -73,11 +76,12 @@ class Document:
         """
         with open(path, 'r') as file_p:
             xml_data = BeautifulSoup(file_p.read(), "xml")
-        if len(xml_data.contents) != 1:
-            raise XmlDecodingError("Length of contents is not 1")
-        data = xml_data.contents[0]
-        if not isinstance(data, Tag):
-            raise XmlDecodingError("Data is not a Tag")
+
+        try:
+            data = xml_data.find_all("mxfile")[0]
+        except IndexError:
+            raise NoDrawioDocumentError("No draw.io diagram tag (mxfile) was found inside the file")
+
         return cls.from_xml(data)
 
     def to_xml(self) -> Tag:
