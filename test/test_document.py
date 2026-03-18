@@ -1,13 +1,9 @@
-from pathlib import Path
-
 import pytest
-from bs4 import BeautifulSoup
 
 from py_draw_io.arrow_cell import ArrowCell
 from py_draw_io.cell_collection import CellCollection
 from py_draw_io.diagram import Diagram
 from py_draw_io.document import Document, DiagramNotFoundError, NoDrawioDocumentError
-from py_draw_io.errors import XmlDecodingError
 from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.graph_model import GraphModel
 from py_draw_io.point import Point

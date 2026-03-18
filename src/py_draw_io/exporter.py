@@ -19,6 +19,10 @@ class ExportFailedError(Exception):
     """Exception raised if the draw.io export command fails."""
 
 
+class IllegalExtensionError(Exception):
+    """Exception raised if anything but a .drawio or .xml is to be exported."""
+
+
 class DrawIoExporter:
     """Handles the export of draw.io diagrams into png images."""
 
@@ -93,6 +97,10 @@ class DrawIoExporter:
          enclosed by it will be exported
         :return: None
         """
+        if not source.is_file():
+            raise FileNotFoundError(f"{source} is not a file")
+        if not source.name.endswith(".drawio") or source.name.endswith(".xml"):
+            raise IllegalExtensionError(f"{source} is neither a .drawio nor .xml file")
         if out_path is None:
             out_path = self._create_default_path(page, limit_export)
         os.makedirs(out_path.parent, exist_ok=True)
