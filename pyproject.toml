@@ -17,6 +17,8 @@ packages = [
     { include = "py_draw_io", from = "src" }
 ]
 
+include = ["src/py_draw_io/py.typed"]
+
 [tool.pytest.ini_options]
 pythonpath = [
     "src"
