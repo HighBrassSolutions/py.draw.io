@@ -16,7 +16,7 @@ jobs:
           poetry install
 
       - name: Run Unit Tests
-        run: poetry run pytest --log-cli-level=INFO --junit-xml=artifacts/unit_tests.xml --cov=py_draw_io --cov-report=term-missing
+        run: poetry run pytest --log-cli-level=INFO --junit-xml=artifacts/unit_tests.xml --cov=py_draw_io --cov-report=term-missing --cov-fail-under=100
 
   type-checks:
     runs-on: ubuntu-latest

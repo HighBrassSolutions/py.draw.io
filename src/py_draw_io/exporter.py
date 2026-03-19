@@ -49,9 +49,11 @@ class DrawIoExporter:
 
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
+        if out_path.is_file():
+            os.remove(out_path)
         export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
         return_code = os.system(export_com)
-        if return_code != 0:
+        if not os.path.isfile(out_path):
             raise ExportFailedError(return_code)
 
     def _create_default_path(self, page: str, limit_export: Optional[str]) -> Path:
@@ -99,7 +101,7 @@ class DrawIoExporter:
         """
         if not source.is_file():
             raise FileNotFoundError(f"{source} is not a file")
-        if not source.name.endswith(".drawio") or source.name.endswith(".xml"):
+        if not source.name.endswith(".drawio"):
             raise IllegalExtensionError(f"{source} is neither a .drawio nor .xml file")
         if out_path is None:
             out_path = self._create_default_path(page, limit_export)
