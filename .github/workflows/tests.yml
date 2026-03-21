@@ -1,0 +1,63 @@
+name: Tests
+
+on: [ pull_request ]
+
+jobs:
+  unit-tests:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Poetry
+        run: |
+          pip install poetry
+          poetry install
+
+      - name: Install draw.io
+        run: brew install --cask drawio
+
+      - name: Run Unit Tests
+        run: poetry run pytest --log-cli-level=INFO --junit-xml=artifacts/unit_tests.xml --cov=py_draw_io --cov-report=term-missing --cov-fail-under=100
+
+  type-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Poetry
+        run: |
+          pip install poetry
+          poetry install
+
+      - name: Run mypy type-checks
+        run: poetry run mypy src/py_draw_io --txt-report=artifacts
+
+      - name: Show Report
+        run: cat artifacts/index.txt
+
+      - name: Check precision
+        run: |
+          imprecise=$(grep "Total" artifacts/index.txt | awk '{print $4}' | tr -d '%')
+          if (( $(echo "$imprecise > 0" | bc -l) )); then
+            echo "Mypy coverage is not 100% (imprecise: $imprecise%)"
+            exit 1
+          fi
+
+  code-style-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Poetry
+        run: |
+          pip install poetry
+          poetry install
+
+      - name: Run ruff code-style-checks
+        run: poetry run ruff check src/py_draw_io
