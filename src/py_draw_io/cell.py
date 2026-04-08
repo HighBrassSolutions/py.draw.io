@@ -12,6 +12,7 @@ from py_draw_io.helpers import get_string_attribute, get_optional_string_attribu
 
 if TYPE_CHECKING:
     from py_draw_io.cell_collection import CellCollection
+    from py_draw_io.layer import Layer
 
 
 class Cell(Fittable):
@@ -20,12 +21,12 @@ class Cell(Fittable):
     id: str
     style: Optional[Dict[str, Union[int, str, None]]]
     value: Optional[str]
-    parent: Optional[Cell]
+    parent: Union[Cell, Layer]
     children: List[Cell]
     contains_geometry: bool
 
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]],
-                 value: Optional[str], parent: Optional[Cell]):
+                 value: Optional[str], parent: Union[Cell, Layer]):
         """
         Create a new instance of the Cell class.
 
@@ -37,9 +38,14 @@ class Cell(Fittable):
         self.id = cell_id
         self.style = style
         self.value = value
+
         self.parent = parent
         if self.parent is not None:
-            self.parent.children.append(self)
+            if isinstance(self.parent, Cell):
+                self.parent.children.append(self)
+            else:
+                self.parent.cells.append(self)
+
         self.children = []
         self.contains_geometry = False
 
@@ -122,26 +128,30 @@ class Cell(Fittable):
         return style
 
     @classmethod
-    def _decode_parent(cls, data: Tag, existing_cells: CellCollection) -> Optional[Cell]:
+    def _decode_parent(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> Union[Cell, Layer]:
         if "parent" not in data.attrs:
-            return None
+            raise XmlDecodingError("No parent tag found")
         parent_id = get_string_attribute(data, "parent")
+        for layer in layers:
+            if layer.id == parent_id:
+                return layer
         return existing_cells.find_by_id(parent_id)
 
     @classmethod
-    def from_xml(cls, data: Tag, existing_cells: CellCollection) -> Cell:
+    def from_xml(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> Cell:
         """
         Create a Cell from the given xml data.
 
         :param data: XML tag to create the Cell from
         :param existing_cells: Cells already parsed from the XML document
+        :param layers: Layers parsed from the XML document
         :return: The created Cell
         :raises XmlDecodingError: If any of the required attributes is missing
         """
         cell_id = get_string_attribute(data, "id")
-        parent = cls._decode_parent(data, existing_cells)
+        parent = cls._decode_parent(data, existing_cells, layers)
         style = cls._decode_style(data)
-        value = get_optional_string_attribute(data, "id")
+        value = get_optional_string_attribute(data, "value")
 
         out = Cell(cell_id, style, value, parent)
         return out

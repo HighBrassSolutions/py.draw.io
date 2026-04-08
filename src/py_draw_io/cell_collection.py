@@ -41,6 +41,9 @@ class CellCollection:
     def __iter__(self) -> Iterator[Cell]:
         return iter(self._data)
 
+    def __getitem__(self, index: int) -> Cell:
+        return self._data[index]
+
     def append(self, cell: Cell) -> None:
         """
         Append a cell to the cell collection.

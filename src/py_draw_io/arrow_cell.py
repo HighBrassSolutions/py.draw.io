@@ -7,6 +7,7 @@ from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cell_collection import CellCollection
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
+from py_draw_io.layer import Layer
 from py_draw_io.point import Point
 from py_draw_io.cell import Cell
 
@@ -98,17 +99,18 @@ class ArrowCell(Cell):
         return base
 
     @classmethod
-    def from_xml(cls, data: Tag, existing_cells: CellCollection) -> ArrowCell:
+    def from_xml(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> ArrowCell:
         """
         Create a ArrowCell from the given xml data.
 
         :param data: XML tag to create the ArrowCell from
         :param existing_cells: Cells already parsed from the XML document
+        :param layers: Layers parsed from the XML document
         :return: The created ArrowCell
         :raises XmlDecodingError: If any of the required attributes is missing
         """
         cell_id = get_string_attribute(data, "id")
-        parent = cls._decode_parent(data, existing_cells)
+        parent = cls._decode_parent(data, existing_cells, layers)
         style = cls._decode_style(data)
         value = get_optional_string_attribute(data, "value")
 

@@ -272,6 +272,32 @@ def test_property_check_edge():
         _ = ArrowCell.from_xml(data, CellCollection())
     assert str(err.value) == "Geometry is no Arrow"
 
+def test_attribute_value():
+    """Test the decoding of the value attribute"""
+
+    data = BeautifulSoup("""
+        <mxCell id="test1" edge="1" style="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="22" y="1" as="sourcePoint" />
+            <mxPoint x="77" y="66" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+    """, "xml").find("mxCell")
+
+    arrow = ArrowCell.from_xml(data, CellCollection())
+    assert arrow.value is None
+
+    data = BeautifulSoup("""
+        <mxCell id="test1" edge="1" style="" value="yolo">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="22" y="1" as="sourcePoint" />
+            <mxPoint x="77" y="66" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+    """, "xml").find("mxCell")
+
+    arrow = ArrowCell.from_xml(data, CellCollection())
+    assert arrow.value == "yolo"
 
 def test_multiple_geometry_tags():
     """Test the raising of an error if multiple geometry tags were found"""

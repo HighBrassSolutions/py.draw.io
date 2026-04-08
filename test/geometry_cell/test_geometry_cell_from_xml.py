@@ -77,3 +77,25 @@ def test_with_geometry_parent():
     cell = GeometryCell.from_xml(data, CellCollection([parent]))
     assert cell.top_left == Point(11, 14)
     assert cell.bottom_right == Point(14, 16)
+
+
+def test_attribute_value():
+    """Test the decoding of the value attribute"""
+
+    data = BeautifulSoup("""
+        <mxCell id="test1" style="" vertex="1">
+        <mxGeometry height="32.5" width="150" x="300.2" y="400.5" as="geometry" />
+        </mxCell>
+    """, "xml").find("mxCell")
+
+    cell = GeometryCell.from_xml(data, CellCollection())
+    assert cell.value is None
+
+    data = BeautifulSoup("""
+        <mxCell id="test1" style="" vertex="1" value="yolo">
+        <mxGeometry height="32.5" width="150" x="300.2" y="400.5" as="geometry" />
+        </mxCell>
+    """, "xml").find("mxCell")
+
+    cell = GeometryCell.from_xml(data, CellCollection())
+    assert cell.value == "yolo"

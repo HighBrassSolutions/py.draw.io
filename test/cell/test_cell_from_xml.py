@@ -90,3 +90,23 @@ def test_parent_mapping():
 
     assert id(arrow.parent) == id(parent)
     assert [id(x) for x in parent.children] == [id(arrow)]
+
+
+def test_attribute_value():
+    """Test the decoding of the value attribute"""
+
+    data = BeautifulSoup("""
+        <mxCell id="test1" edge="1" style="rounded=1;whiteSpace=wrap;html=none;">
+        </mxCell>
+    """, "xml").find("mxCell")
+
+    cell = Cell.from_xml(data, CellCollection())
+    assert cell.value is None
+
+    data = BeautifulSoup("""
+        <mxCell id="test1" edge="1" style="rounded=1;whiteSpace=wrap;html=none;" value="yolo">
+        </mxCell>
+    """, "xml").find("mxCell")
+
+    cell = Cell.from_xml(data, CellCollection())
+    assert cell.value == "yolo"

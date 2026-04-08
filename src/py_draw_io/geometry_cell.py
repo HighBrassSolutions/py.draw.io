@@ -30,7 +30,7 @@ class GeometryCell(Cell, BoundaryContainer):
         :param value: Content of the cells text field
         :param parent: Parent cell (if there is one)
         :param top_left: Top left point of the geometry
-        :param bottom_right: Top botton right point of the geometry
+        :param bottom_right: Botton right point of the geometry
         """
         super().__init__(cell_id, style, value, parent)
         self.top_left = top_left
@@ -93,17 +93,18 @@ class GeometryCell(Cell, BoundaryContainer):
         return base
 
     @classmethod
-    def from_xml(cls, data: Tag, existing_cells: CellCollection) -> GeometryCell:
+    def from_xml(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> GeometryCell:
         """
         Create a GeometryCell from the given xml data.
 
         :param data: XML tag to create the GeometryCell from
         :param existing_cells: Cells already parsed from the XML document
+        :param layers: Layers parsed from the XML document
         :return: The created GeometryCell
         :raises XmlDecodingError: If any of the required attributes is missing
         """
         cell_id = get_string_attribute(data, "id")
-        parent = cls._decode_parent(data, existing_cells)
+        parent = cls._decode_parent(data, existing_cells, layers)
         style = cls._decode_style(data)
         value = get_optional_string_attribute(data, "value")
 
