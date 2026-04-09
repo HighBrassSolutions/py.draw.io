@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Optional, List
 
-from py_draw_io.cell_collection import CellCollection, CellNotFoundError
+from py_draw_io.cell_collection import CellNotFoundError
 from py_draw_io.document import Document
 
 DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
@@ -96,7 +96,7 @@ class DrawIoExporter:
         normal_layers = [x for x in page.layers if x not in marker_layers]
 
         if not normal_layers:
-            raise LayerConfigurationError(f"No normal layers were detected")
+            raise LayerConfigurationError("No normal layers were detected")
 
         limit_geometry = None
         found_in_marker_layer = False

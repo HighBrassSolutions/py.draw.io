@@ -1,4 +1,4 @@
-"""Module for the Layer class"""
+"""Module for the Layer class."""
 from __future__ import annotations
 from typing import Optional
 from bs4 import Tag
@@ -8,12 +8,20 @@ from py_draw_io.helpers import get_string_attribute, get_optional_string_attribu
 
 
 class Layer:
-    """Represents a layer containing the geometries within a diagram"""
+    """Represents a layer containing the geometries within a diagram."""
+
     cells: CellCollection
     id: str
     name: Optional[str]
 
     def __init__(self, cells: CellCollection, layer_id: str, name: str = None) -> None:
+        """
+        Create a new instance of the Layer class.
+
+        :param cells: Cells the layer contains
+        :param layer_id: ID of the layer
+        :param name: Name of the layer
+        """
         self.cells = cells
         self.id = layer_id
         self.name = name

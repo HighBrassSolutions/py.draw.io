@@ -1,12 +1,13 @@
 """Module for the GeometryCell."""
 from __future__ import annotations
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, List
 from bs4 import Tag
 from typing import TYPE_CHECKING
 
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
+from py_draw_io.layer import Layer
 from py_draw_io.point import Point
 from py_draw_io.cell import Cell
 
@@ -21,7 +22,7 @@ class GeometryCell(Cell, BoundaryContainer):
     bottom_right: Point
 
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]], value: Optional[str],
-                 parent: Optional[Cell], top_left: Point, bottom_right: Point):
+                 parent: Union[Cell, Layer], top_left: Point, bottom_right: Point):
         """
         Create a new instance for the ArrowCell class.
 
@@ -121,7 +122,7 @@ class GeometryCell(Cell, BoundaryContainer):
         x = float(get_string_attribute(geometry_tag, "x", "0"))
         y = float(get_string_attribute(geometry_tag, "y", "0"))
 
-        if parent is not None and isinstance(parent, GeometryCell):
+        if isinstance(parent, GeometryCell):
             x += parent.top_left.x
             y += parent.top_left.y
 

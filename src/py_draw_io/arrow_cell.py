@@ -20,7 +20,7 @@ class ArrowCell(Cell):
     waypoints: List[Point]
 
     def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]],
-                 value: Optional[str], parent: Optional[Cell],
+                 value: Optional[str], parent: Union[Cell, Layer],
                  source: Union[Cell, Point], target: Union[Cell, Point], waypoints: List[Point]):
         """
         Create a new instance of the ArrowCell class.
