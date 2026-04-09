@@ -6,6 +6,7 @@ from py_draw_io.diagram import Diagram
 from py_draw_io.document import Document, DiagramNotFoundError, NoDrawioDocumentError
 from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.graph_model import GraphModel
+from py_draw_io.layer import Layer
 from py_draw_io.point import Point
 
 DUMMY_DATA = """
@@ -95,8 +96,8 @@ def test_to_xml(temp_dir):
     model = GraphModel(10, 400, 600)
     geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
     arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    diagram = Diagram("test_diag", "test_diag_id_123", CellCollection([geo1, arr1]), model)
-    diagram2 = Diagram("empty_diag", "empty_diag_id_321", CellCollection(), model)
+    diagram = Diagram("test_diag", "test_diag_id_123", [Layer(CellCollection([geo1, arr1]), "1")], model)
+    diagram2 = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "2")], model)
     doc = Document([diagram, diagram2], "local", "47")
 
     xml_data = doc.to_xml()
@@ -112,8 +113,8 @@ def test_save(temp_dir):
     model = GraphModel(10, 400, 600)
     geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
     arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    diagram = Diagram("test_diag", "test_diag_id_123", CellCollection([geo1, arr1]), model)
-    diagram2 = Diagram("empty_diag", "empty_diag_id_321", CellCollection(), model)
+    diagram = Diagram("test_diag", "test_diag_id_123", [Layer(CellCollection([geo1, arr1]), "1")], model)
+    diagram2 = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "2")], model)
     doc = Document([diagram, diagram2], "local", "47")
 
     doc.save(temp_file)

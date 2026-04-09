@@ -107,7 +107,7 @@ class Diagram:
     @classmethod
     def from_xml(cls, data: Tag) -> Diagram:
         """
-        Create a Diagram from the given xml data.
+        Create a Diagram from the given XML data.
 
         :param data: XML tag to create the Diagram from
         :return: The created Diagram

@@ -7,6 +7,7 @@ from py_draw_io.diagram import Diagram
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.graph_model import GraphModel
+from py_draw_io.layer import Layer
 from py_draw_io.point import Point
 
 
@@ -54,7 +55,9 @@ def test_from_xml_success():
     assert diagram.graph_model.page_height == 1169
     assert diagram.graph_model.page_width == 827
 
-    assert len(diagram.cells) == 5
+    assert len(diagram.layers) == 1
+    layer = diagram.layers[0]
+    assert len(layer.cells) == 3
 
 
 def test_from_xml_two_graph_models():
@@ -110,7 +113,8 @@ def test_to_xml():
     model = GraphModel(10, 400, 600)
     geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
     arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    diagram = Diagram("test_diag", "diag_id", CellCollection([geo1, arr1]), model)
+    layer = Layer(CellCollection([geo1, arr1]), "1")
+    diagram = Diagram("test_diag", "diag_id", [layer], model)
 
     xml_data = diagram.to_xml()
     geometries = xml_data.find_all("mxGeometry")

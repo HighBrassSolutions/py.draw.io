@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Optional, List
 
-from py_draw_io.cell_collection import CellCollection
+from py_draw_io.cell_collection import CellCollection, CellNotFoundError
 from py_draw_io.document import Document
 
 DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
@@ -22,6 +22,9 @@ class ExportFailedError(Exception):
 
 class IllegalExtensionError(Exception):
     """Exception raised if anything but a .drawio or .xml is to be exported."""
+
+class LayerConfigurationError(Exception):
+    """Exception raised if anything regarding the layer configuration went wrong."""
 
 
 class DrawIoExporter:
@@ -88,11 +91,33 @@ class DrawIoExporter:
         doc = Document.load(source)
         page = doc.get_diagram(page_name)
         doc.diagrams = [page]
-        cells = CellCollection()
-        for base_cell in page.cells:
-            pass
 
-        page.cells.remove_cells_outside_boundary(limit_export)
+        marker_layers = [x for x in page.layers if x.id in self._marker_layers or x.name in self._marker_layers]
+        normal_layers = [x for x in page.layers if x not in marker_layers]
+
+        if not normal_layers:
+            raise LayerConfigurationError(f"No normal layers were detected")
+
+        limit_geometry = None
+        found_in_marker_layer = False
+        for layer in page.layers:
+            try:
+                limit_geometry = layer.cells.find_by_id(limit_export)
+                if layer in marker_layers:
+                    found_in_marker_layer = True
+            except CellNotFoundError:
+                pass
+
+        if limit_geometry is None:
+            raise CellNotFoundError(limit_export)
+
+        for layer in normal_layers:
+            layer.cells.remove_cells_outside_boundary(limit_geometry.id)
+
+        page.layers = normal_layers
+        if found_in_marker_layer:
+            normal_layers[0].cells.append(limit_geometry)
+
         doc.save(file_path)
         return file_path
 
@@ -116,11 +141,15 @@ class DrawIoExporter:
             raise FileNotFoundError(f"{source} is not a file")
         if not source.name.endswith(".drawio"):
             raise IllegalExtensionError(f"{source} is neither a .drawio nor .xml file")
+
         if out_path is None:
-            out_path = self._create_default_path(page, limit_export)
-        os.makedirs(out_path.parent, exist_ok=True)
+            export_path = self._create_default_path(page, limit_export)
+        else:
+            export_path = out_path
+
+        os.makedirs(export_path.parent, exist_ok=True)
 
         if limit_export is None:
-            self._export(source, page, out_path)
+            self._export(source, page, export_path)
         else:
-            self._export_part_of_diagram(source, page, out_path, limit_export)
+            self._export_part_of_diagram(source, page, export_path, limit_export)
