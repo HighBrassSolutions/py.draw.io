@@ -91,6 +91,7 @@ class CellCollection:
         :raises IllegalBoundaryError: If the found cell does not contain a geometry
         :return: None
         """
+        boundary_container: BoundaryContainer
         if isinstance(boundary, str):
             found = self.find_by_id(boundary)
             if not isinstance(found, BoundaryContainer):

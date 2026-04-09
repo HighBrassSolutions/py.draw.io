@@ -4,7 +4,8 @@ import os
 from pathlib import Path
 from typing import Optional, List
 
-from py_draw_io.cell_collection import CellNotFoundError
+from py_draw_io.boundary_container import BoundaryContainer
+from py_draw_io.cell_collection import CellNotFoundError, IllegalBoundaryError
 from py_draw_io.document import Document
 
 DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
@@ -105,14 +106,18 @@ class DrawIoExporter:
                 limit_geometry = layer.cells.find_by_id(limit_export)
                 if layer in marker_layers:
                     found_in_marker_layer = True
+                break
             except CellNotFoundError:
                 pass
 
         if limit_geometry is None:
             raise CellNotFoundError(limit_export)
 
+        elif not isinstance(limit_geometry, BoundaryContainer):
+            raise IllegalBoundaryError(f"Detected Cell for id '{limit_export}' has no geometry")
+
         for layer in normal_layers:
-            layer.cells.remove_cells_outside_boundary(limit_geometry.id)
+            layer.cells.remove_cells_outside_boundary(limit_geometry)
 
         page.layers = normal_layers
         if found_in_marker_layer:

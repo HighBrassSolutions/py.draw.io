@@ -19,6 +19,10 @@
         <mxCell id="eERzdUeXhqdjQ1jmuvG7-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="60" width="120" x="450" y="160" as="geometry" />
         </mxCell>
+        <mxCell id="2" parent="0" value="markers"/>
+        <mxCell id="marker_geo_123" parent="2" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="120" x="140" y="150" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

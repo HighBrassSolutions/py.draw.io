@@ -1,3 +1,4 @@
+from typing import cast
 from bs4 import Tag, BeautifulSoup
 
 from py_draw_io.boundary_container import BoundaryContainer
@@ -12,7 +13,5 @@ class DummyBoundaryContainer(BoundaryContainer):
 
 def create_tag(xml: str, tag_name: str) -> Tag:
     soup = BeautifulSoup(xml, "xml")
-    tag = soup.find(tag_name)
-    if not isinstance(tag, Tag):
-        raise ValueError()
+    tag = cast(Tag, soup.find(tag_name))
     return tag
