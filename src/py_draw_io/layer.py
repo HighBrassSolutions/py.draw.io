@@ -14,7 +14,7 @@ class Layer:
     id: str
     name: Optional[str]
 
-    def __init__(self, cells: CellCollection, layer_id: str, name: str = None) -> None:
+    def __init__(self, cells: CellCollection, layer_id: str, name: Optional[str] = None) -> None:
         """
         Create a new instance of the Layer class.
 
