@@ -9,11 +9,12 @@ from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.graph_model import GraphModel
 from py_draw_io.layer import Layer
 from py_draw_io.point import Point
+from test.helpers import create_tag
 
 
 def test_to_string():
     model = GraphModel(10, 400, 600)
-    diagram = Diagram("test_diag", "diag_id", CellCollection(), model)
+    diagram = Diagram("test_diag", "diag_id", [], model)
     assert "test_diag" in str(diagram)
     assert "diag_id" in str(diagram)
     assert "0" in str(diagram)
@@ -21,7 +22,7 @@ def test_to_string():
 
 
 def test_from_xml_success():
-    data = BeautifulSoup("""
+    data = create_tag("""
     <diagram id="diag1" name="data">
         <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
           <root>
@@ -45,7 +46,7 @@ def test_from_xml_success():
           </root>
         </mxGraphModel>
       </diagram>
-    """, "xml").find("diagram")
+    """, "diagram")
 
     diagram = Diagram.from_xml(data)
     assert diagram.id == "diag1"
@@ -61,25 +62,47 @@ def test_from_xml_success():
 
 
 def test_from_xml_two_graph_models():
-    data = BeautifulSoup("""
+    data = create_tag("""
     <diagram id="diag1" name="data">
         <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
         </mxGraphModel>
         <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
         </mxGraphModel>
       </diagram>
-    """, "xml").find("diagram")
+    """, "diagram")
 
     with pytest.raises(XmlDecodingError) as err:
         _ = Diagram.from_xml(data)
     assert "more or less than one model data" in str(err.value)
 
+def test_multiple_base_cells():
+    data = create_tag("""
+        <diagram id="diag1" name="data">
+            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+              <root>
+                <mxCell id="0" />
+                <mxCell id="55" />
+                <mxCell id="1" parent="0" />
+                <mxCell id="geo1" parent="non_existent" style="" value="" vertex="1">
+                  <mxGeometry height="60" width="120" x="140" y="150" as="geometry" />
+                </mxCell>
+                <mxCell id="geo2" parent="1" style=" value="" vertex="1">
+                  <mxGeometry height="60" width="120" x="450" y="160" as="geometry" />
+                </mxCell>
+              </root>
+            </mxGraphModel>
+          </diagram>
+        """, "diagram")
+
+    with pytest.raises(XmlDecodingError) as err:
+        _ = Diagram.from_xml(data)
+    assert "Found 2 base cells" in str(err.value)
 
 def test_from_xml_no_graph_models():
-    data = BeautifulSoup("""
+    data = create_tag("""
     <diagram id="diag1" name="data">
     </diagram>
-    """, "xml").find("diagram")
+    """, "diagram")
 
     with pytest.raises(XmlDecodingError) as err:
         _ = Diagram.from_xml(data)
@@ -87,7 +110,7 @@ def test_from_xml_no_graph_models():
 
 
 def test_from_xml_missing_reference_cells():
-    data = BeautifulSoup("""
+    data = create_tag("""
         <diagram id="diag1" name="data">
             <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
               <root>
@@ -102,7 +125,7 @@ def test_from_xml_missing_reference_cells():
               </root>
             </mxGraphModel>
           </diagram>
-        """, "xml").find("diagram")
+        """, "diagram")
 
     with pytest.raises(XmlDecodingError) as err:
         _ = Diagram.from_xml(data)

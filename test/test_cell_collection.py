@@ -4,6 +4,7 @@ from py_draw_io.arrow_cell import ArrowCell
 from py_draw_io.cell import Cell
 from py_draw_io.cell_collection import CellCollection, CellNotFoundError, IllegalBoundaryError
 from py_draw_io.geometry_cell import GeometryCell
+from py_draw_io.layer import Layer
 from py_draw_io.point import Point
 from test.helpers import DummyBoundaryContainer
 
@@ -27,6 +28,13 @@ def test_append():
     assert len(data) == 0
     data.append(cell)
     assert len(data) == 1
+
+
+def test_getitem():
+    layer = Layer(CellCollection(), "1")
+    cell = Cell("test_cell", None, "", layer)
+    data = CellCollection([cell])
+    assert data[0] == cell
 
 
 def test_constructor():

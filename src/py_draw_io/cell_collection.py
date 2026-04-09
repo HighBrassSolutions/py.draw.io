@@ -95,10 +95,12 @@ class CellCollection:
             found = self.find_by_id(boundary)
             if not isinstance(found, BoundaryContainer):
                 raise IllegalBoundaryError(f"Detected Cell for id '{boundary}' has no geometry")
-            boundary = found
+            boundary_container = found
+        else:
+            boundary_container = boundary
 
         def clean(cells: List[Cell]) -> List[Cell]:
-            out = [x for x in cells if not x.contains_geometry or x.fits_inside(boundary)]
+            out = [x for x in cells if not x.contains_geometry or x.fits_inside(boundary_container)]
             for cell in out:
                 cell.children = clean(cell.children)
             return out
