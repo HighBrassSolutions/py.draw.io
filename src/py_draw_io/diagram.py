@@ -18,7 +18,6 @@ class Diagram:
 
     name: str
     id: str
-    # cells: CellCollection
     layers: List[Layer]
     graph_model: GraphModel
 
@@ -38,6 +37,21 @@ class Diagram:
 
     def __repr__(self) -> str:
         return f"Diagram({self.name}, {self.id}, {len(self.layers)} layers)"
+
+    def find_by_id(self, cell_id: str) -> Cell:
+        """
+        Search the diagram for a cell with the given id recursively.
+
+        :param cell_id: ID to find a matching cell for
+        :raises CellNotFoundError: If no cell was found for the given ID
+        :return: The cell if one was found
+        """
+        for layer in self.layers:
+            try:
+                return layer.cells.find_by_id(cell_id)
+            except CellNotFoundError:
+                pass
+        raise CellNotFoundError(cell_id)
 
     @classmethod
     def _build_cell(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> Cell:

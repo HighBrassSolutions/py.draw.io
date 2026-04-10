@@ -66,6 +66,15 @@ class Cell(Fittable):
         """
         return True
 
+    @property
+    def parent_layer(self) -> Layer:
+        """The layer this cell is part of."""
+
+        parent = self.parent
+        while isinstance(parent, Cell):
+            parent = parent.parent
+        return parent
+
     @classmethod
     def _encode_style(cls, style: Dict[str, Union[int, str, None]]) -> str:
         buf = copy.deepcopy(style)
