@@ -1,13 +1,13 @@
 """Module for the DrawIoExporter class and its Exceptions."""
 import logging
 import os
+from copy import copy
 from pathlib import Path
 from typing import Optional, List
 
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
 from py_draw_io.document import Document
-from py_draw_io.layer import Layer
 
 DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
 DEFAULT_QUALITY = 5
@@ -104,12 +104,10 @@ class DrawIoExporter:
         limit_geometry = page.find_by_id(limit_export)
         parent_layer = limit_geometry.parent_layer
 
-        page.layers = normal_layers
+        page.layers = copy(normal_layers)
         if parent_layer in marker_layers:
-
-            buffer_layer = Layer(CellCollection([limit_geometry]), parent_layer.id)
-            limit_geometry.parent = buffer_layer
-            page.layers.append(buffer_layer)
+            parent_layer.cells = CellCollection([limit_geometry])
+            page.layers.append(parent_layer)
 
         if not isinstance(limit_geometry, BoundaryContainer):
             raise IllegalBoundaryError(f"Detected Cell for id '{limit_export}' has no geometry")
