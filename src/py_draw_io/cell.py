@@ -69,7 +69,6 @@ class Cell(Fittable):
     @property
     def parent_layer(self) -> Layer:
         """The layer this cell is part of."""
-
         parent = self.parent
         while isinstance(parent, Cell):
             parent = parent.parent
