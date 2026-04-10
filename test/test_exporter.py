@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, ExportFailedError
+from py_draw_io.cell_collection import CellNotFoundError, IllegalBoundaryError
+from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, ExportFailedError, LayerConfigurationError
 
 FILE_FOR_TEST_PATH = Path(__file__).parent / "test_diagram.drawio"
 
@@ -129,3 +130,30 @@ def test_success(tmp_path):
 
     print(out_path.stat().st_size)
     assert out_path.stat().st_size < 3000
+
+
+def test_export_with_marker(tmp_path):
+    out_path = tmp_path / "out.png"
+    DrawIoExporter(marker_layers=["markers"]).export(FILE_FOR_TEST_PATH, "pagerino", out_path, "marker_geo_123")
+
+
+def test_export_no_normal_layers(tmp_path):
+    out_path = tmp_path / "out.png"
+    with pytest.raises(LayerConfigurationError):
+        DrawIoExporter(marker_layers=["1", "2"]).export(FILE_FOR_TEST_PATH, "pagerino", out_path, "marker_geo_123")
+
+
+def test_export_limit_not_found(tmp_path):
+    out_path = tmp_path / "out.png"
+    with pytest.raises(CellNotFoundError):
+        DrawIoExporter(marker_layers=["markers"]).export(FILE_FOR_TEST_PATH, "pagerino", out_path,
+                                                         "blub_does_not_exist")
+
+
+def test_export_illegal_boundary(tmp_path):
+    out_path = tmp_path / "out.png"
+    with pytest.raises(IllegalBoundaryError):
+        DrawIoExporter(marker_layers=["markers"]).export(FILE_FOR_TEST_PATH,
+                                                         "pagerino",
+                                                         out_path,
+                                                         "eERzdUeXhqdjQ1jmuvG7-3")

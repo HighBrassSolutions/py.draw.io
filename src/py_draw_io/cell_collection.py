@@ -41,6 +41,9 @@ class CellCollection:
     def __iter__(self) -> Iterator[Cell]:
         return iter(self._data)
 
+    def __getitem__(self, index: int) -> Cell:
+        return self._data[index]
+
     def append(self, cell: Cell) -> None:
         """
         Append a cell to the cell collection.
@@ -88,14 +91,17 @@ class CellCollection:
         :raises IllegalBoundaryError: If the found cell does not contain a geometry
         :return: None
         """
+        boundary_container: BoundaryContainer
         if isinstance(boundary, str):
             found = self.find_by_id(boundary)
             if not isinstance(found, BoundaryContainer):
                 raise IllegalBoundaryError(f"Detected Cell for id '{boundary}' has no geometry")
-            boundary = found
+            boundary_container = found
+        else:
+            boundary_container = boundary
 
         def clean(cells: List[Cell]) -> List[Cell]:
-            out = [x for x in cells if not x.contains_geometry or x.fits_inside(boundary)]
+            out = [x for x in cells if not x.contains_geometry or x.fits_inside(boundary_container)]
             for cell in out:
                 cell.children = clean(cell.children)
             return out

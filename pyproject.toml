@@ -1,6 +1,6 @@
 [project]
 name = "py.draw.io"
-version = "0.1.0"
+version = "0.1.1"
 description = "Allows for the creation, manipulation and export of draw.io diagrams in python"
 authors = [
     { name = "Johannes Grothe", email = "johannesgrothe@proton.me" }

@@ -1,9 +1,12 @@
 """Module for the DrawIoExporter class and its Exceptions."""
 import logging
 import os
+from copy import copy
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
+from py_draw_io.boundary_container import BoundaryContainer
+from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
 from py_draw_io.document import Document
 
 DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
@@ -23,29 +26,41 @@ class IllegalExtensionError(Exception):
     """Exception raised if anything but a .drawio or .xml is to be exported."""
 
 
+class LayerConfigurationError(Exception):
+    """Exception raised if anything regarding the layer configuration went wrong."""
+
+
 class DrawIoExporter:
     """Handles the export of draw.io diagrams into png images."""
 
     _draw_io: Path
     _quality: int
     _temp: Path
+    _marker_layers: List[str]
     _logger: logging.Logger
 
     def __init__(self, draw_io: Path = DEFAULT_DRAWIO_LOCATION,
                  quality: int = DEFAULT_QUALITY,
-                 temp_dir: Path = DEFAULT_TEMP_DIR):
+                 temp_dir: Path = DEFAULT_TEMP_DIR,
+                 marker_layers: Optional[List[str]] = None):
         """
         Create a new instance for the DrawIoExporter class.
 
         :param draw_io: Path to the draw.io executable
         :param quality: Quality index for the draw.io export. Can remain the default if no problems arise
         :param temp_dir: Directory where temporary diagrams are stored that need to be created
+        :param marker_layers: IDs or names of marker layers
         if only a part of a diagram is to be exported
         """
         self._draw_io = draw_io
         self._quality = quality
         self._temp = temp_dir
         self._logger = logging.getLogger(self.__class__.__name__)
+
+        if marker_layers:
+            self._marker_layers = marker_layers
+        else:
+            self._marker_layers = []
 
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
@@ -79,7 +94,27 @@ class DrawIoExporter:
         doc = Document.load(source)
         page = doc.get_diagram(page_name)
         doc.diagrams = [page]
-        page.cells.remove_cells_outside_boundary(limit_export)
+
+        marker_layers = [x for x in page.layers if x.id in self._marker_layers or x.name in self._marker_layers]
+        normal_layers = [x for x in page.layers if x not in marker_layers]
+
+        if not normal_layers:
+            raise LayerConfigurationError("No normal layers were detected")
+
+        limit_geometry = page.find_by_id(limit_export)
+        parent_layer = limit_geometry.parent_layer
+
+        page.layers = copy(normal_layers)
+        if parent_layer in marker_layers:
+            parent_layer.cells = CellCollection([limit_geometry])
+            page.layers.append(parent_layer)
+
+        if not isinstance(limit_geometry, BoundaryContainer):
+            raise IllegalBoundaryError(f"Detected Cell for id '{limit_export}' has no geometry")
+
+        for layer in normal_layers:
+            layer.cells.remove_cells_outside_boundary(limit_geometry)
+
         doc.save(file_path)
         return file_path
 
@@ -103,11 +138,15 @@ class DrawIoExporter:
             raise FileNotFoundError(f"{source} is not a file")
         if not source.name.endswith(".drawio"):
             raise IllegalExtensionError(f"{source} is neither a .drawio nor .xml file")
+
         if out_path is None:
-            out_path = self._create_default_path(page, limit_export)
-        os.makedirs(out_path.parent, exist_ok=True)
+            export_path = self._create_default_path(page, limit_export)
+        else:
+            export_path = out_path
+
+        os.makedirs(export_path.parent, exist_ok=True)
 
         if limit_export is None:
-            self._export(source, page, out_path)
+            self._export(source, page, export_path)
         else:
-            self._export_part_of_diagram(source, page, out_path, limit_export)
+            self._export_part_of_diagram(source, page, export_path, limit_export)
