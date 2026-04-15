@@ -71,6 +71,9 @@ class DrawIoExporter:
 
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
+        if self._export_can_be_skipped(file, out_path):
+            return
+
         if out_path.is_file():
             os.remove(out_path)
         export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
@@ -145,21 +148,24 @@ class DrawIoExporter:
         return hasher.hexdigest()
 
 
-    def _export_can_be_skipped(self, file_hash: str, image_path: Path) -> bool:
+    def _export_can_be_skipped(self, source_diagram_file: Path, target_image_file: Path) -> bool:
         if self._use_cache is False:
             self._logger.debug("Export can't be skipped: cache is disabled")
             return False
 
-        if not image_path.is_file():
+        if not target_image_file.is_file():
             self._logger.debug("Export can't be skipped: Target file does not exist")
             return False
+
+        source_hash = self._get_file_hash(source_diagram_file)
+
         try:
             module_cache = CacheFile.load(DEFAULT_CACHE_FILE)
-            file_cache = module_cache.files[image_path.as_posix()]
-            if file_cache.hash != file_hash:
+            file_cache = module_cache.files[target_image_file.as_posix()]
+            if file_cache.hash != source_hash:
                 self._logger.debug("Export can't be skipped: hash does not match")
                 return False
-            if image_path.name not in file_cache.files:
+            if target_image_file.name not in file_cache.files:
                 self._logger.debug("Export can't be skipped: file is not in cache")
                 return False
         except FileNotFoundError:
@@ -188,10 +194,6 @@ class DrawIoExporter:
             export_path = self._create_default_path(page, limit_export)
         else:
             export_path = out_path
-
-        source_file_hash = self._get_file_hash(source)
-        if self._export_can_be_skipped(source_file_hash, export_path):
-            return
 
         os.makedirs(export_path.parent, exist_ok=True)
 
