@@ -4,6 +4,7 @@ from __future__ import annotations
 import datetime
 import hashlib
 import json
+import threading
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Dict
@@ -40,6 +41,7 @@ class CacheFile(BaseModel):
     created: datetime.datetime
     updated: datetime.datetime
     files: Dict[str, FileCache]
+    __lock = threading.Lock()
 
     @classmethod
     @lru_cache
@@ -106,8 +108,9 @@ class CacheFile(BaseModel):
         :return: The loaded cache file
         """
         try:
-            with open(path, "r") as file_p:
-                data = json.load(file_p)
+            with cls.__lock:
+                with open(path, "r") as file_p:
+                    data = json.load(file_p)
             return CacheFile.model_validate(data)
         except FileNotFoundError as err:
             if create_if_necessary:
@@ -121,9 +124,10 @@ class CacheFile(BaseModel):
         :param path: Path where the file gets saved
         :return: None
         """
-        self.updated = datetime.datetime.now()
-        with open(path, "w") as file_p:
-            json.dump(self.model_dump(mode="json"), file_p, indent=4)
+        with self.__lock:
+            self.updated = datetime.datetime.now()
+            with open(path, "w") as file_p:
+                json.dump(self.model_dump(mode="json"), file_p, indent=4)
 
     @classmethod
     def new(cls) -> CacheFile:
