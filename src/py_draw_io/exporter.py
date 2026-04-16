@@ -1,15 +1,13 @@
 """Module for the DrawIoExporter class and its Exceptions."""
-import hashlib
 import logging
 import os
 from copy import copy
-from functools import lru_cache
 from pathlib import Path
 from typing import Optional, List
 
 from py_draw_io import SETTINGS
 from py_draw_io.boundary_container import BoundaryContainer
-from py_draw_io.cache import DEFAULT_CACHE_FILE, CacheFile
+from py_draw_io.cache import CacheFile, CacheValidationError
 from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
 from py_draw_io.document import Document
 
@@ -69,10 +67,17 @@ class DrawIoExporter:
         else:
             self._marker_layers = []
 
+    @classmethod
+    def _add_to_cache(cls, source_diagram_file: Path, target_image_file: Path) -> None:
+        cache = CacheFile.load()
+        cache.add_to_cache(source_diagram_file, target_image_file)
+        cache.save()
+
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
         if self._export_can_be_skipped(file, out_path):
             return
+        self._add_to_cache(file, out_path)
 
         if out_path.is_file():
             os.remove(out_path)
@@ -133,23 +138,13 @@ class DrawIoExporter:
         temp_file = self._build_temp_file(source, page_name, limit_export)
         self._export(temp_file, page_name, out_path)
 
-    def _use_cache(self) -> bool:
+    def _caching_is_active(self) -> bool:
         if self._use_cache is None:
             return SETTINGS.cache_results
         return self._use_cache
 
-    @classmethod
-    @lru_cache
-    def _get_file_hash(cls, source_file: Path) -> str:
-        hasher = hashlib.sha256()
-        with open(source_file, "rb") as file_p:
-            while chunk := file_p.read(8192):
-                hasher.update(chunk)
-        return hasher.hexdigest()
-
-
     def _export_can_be_skipped(self, source_diagram_file: Path, target_image_file: Path) -> bool:
-        if self._use_cache is False:
+        if not self._caching_is_active():
             self._logger.debug("Export can't be skipped: cache is disabled")
             return False
 
@@ -157,20 +152,16 @@ class DrawIoExporter:
             self._logger.debug("Export can't be skipped: Target file does not exist")
             return False
 
-        source_hash = self._get_file_hash(source_diagram_file)
-
         try:
-            module_cache = CacheFile.load(DEFAULT_CACHE_FILE)
-            file_cache = module_cache.files[target_image_file.as_posix()]
-            if file_cache.hash != source_hash:
-                self._logger.debug("Export can't be skipped: hash does not match")
-                return False
-            if target_image_file.name not in file_cache.files:
-                self._logger.debug("Export can't be skipped: file is not in cache")
-                return False
+            module_cache = CacheFile.load(create_if_necessary=False)
+            module_cache.check_file(source_diagram_file, target_image_file)
         except FileNotFoundError:
             self._logger.debug("Export can't be skipped: cache file does not exist")
             return False
+        except CacheValidationError as err:
+            self._logger.debug(f"Export can't be skipped: {err}")
+            return False
+
         self._logger.debug("Export will be skipped.")
         return True
 
