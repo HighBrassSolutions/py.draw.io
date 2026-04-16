@@ -67,8 +67,9 @@ class DrawIoExporter:
         else:
             self._marker_layers = []
 
-    @classmethod
-    def _add_to_cache(cls, source_diagram_file: Path, target_image_file: Path) -> None:
+    def _add_to_cache(self, source_diagram_file: Path, target_image_file: Path) -> None:
+        if not self._caching_is_active():
+            return
         cache = CacheFile.load(create_if_necessary=True)
         cache.add_to_cache(source_diagram_file, target_image_file)
         cache.save()

@@ -3,3 +3,4 @@ __pycache__
 /artifacts/
 /.coverage
 /temp/
+/.py_draw_io_cache

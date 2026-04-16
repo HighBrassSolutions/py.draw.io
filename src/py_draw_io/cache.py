@@ -123,7 +123,7 @@ class CacheFile(BaseModel):
         """
         self.updated = datetime.datetime.now()
         with open(path, "w") as file_p:
-            json.dump(self.model_dump(), file_p, indent=2)
+            json.dump(self.model_dump(mode="json"), file_p, indent=4)
 
     @classmethod
     def new(cls) -> CacheFile:
