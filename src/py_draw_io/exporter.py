@@ -69,7 +69,7 @@ class DrawIoExporter:
 
     @classmethod
     def _add_to_cache(cls, source_diagram_file: Path, target_image_file: Path) -> None:
-        cache = CacheFile.load()
+        cache = CacheFile.load(create_if_necessary=True)
         cache.add_to_cache(source_diagram_file, target_image_file)
         cache.save()
 
