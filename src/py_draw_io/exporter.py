@@ -5,7 +5,7 @@ from copy import copy
 from pathlib import Path
 from typing import Optional, List
 
-from py_draw_io import SETTINGS
+from py_draw_io import SETTINGS, EXPORT_CACHE
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cache import CacheFile, CacheValidationError
 from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
@@ -70,9 +70,8 @@ class DrawIoExporter:
     def _add_to_cache(self, source_diagram_file: Path, target_image_file: Path) -> None:
         if not self._caching_is_active():
             return
-        cache = CacheFile.load(create_if_necessary=True)
-        cache.add_to_cache(source_diagram_file, target_image_file)
-        cache.save()
+        EXPORT_CACHE.add_to_cache(source_diagram_file, target_image_file)
+        EXPORT_CACHE.save()
 
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
@@ -154,11 +153,7 @@ class DrawIoExporter:
             return False
 
         try:
-            module_cache = CacheFile.load(create_if_necessary=False)
-            module_cache.check_file(source_diagram_file, target_image_file)
-        except FileNotFoundError:
-            self._logger.debug("Export can't be skipped: cache file does not exist")
-            return False
+            EXPORT_CACHE.check_file(source_diagram_file, target_image_file)
         except CacheValidationError as err:
             self._logger.debug(f"Export can't be skipped: {err}")
             return False

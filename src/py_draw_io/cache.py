@@ -7,11 +7,12 @@ import json
 import threading
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from pydantic import BaseModel
 
 DEFAULT_CACHE_FILE = Path(".py_draw_io_cache")
+_LOCK = threading.Lock()
 
 
 class CacheValidationError(Exception):
@@ -41,7 +42,11 @@ class CacheFile(BaseModel):
     created: datetime.datetime
     updated: datetime.datetime
     files: Dict[str, FileCache]
-    __lock = threading.Lock()
+    _lock: threading.Lock
+
+    def __init__(self, **data: Any) -> None:
+        super().__init__(**data)
+        self._lock = threading.Lock()
 
     @classmethod
     @lru_cache
@@ -108,7 +113,7 @@ class CacheFile(BaseModel):
         :return: The loaded cache file
         """
         try:
-            with cls.__lock:
+            with _LOCK:
                 with open(path, "r") as file_p:
                     data = json.load(file_p)
             return CacheFile.model_validate(data)
@@ -124,7 +129,7 @@ class CacheFile(BaseModel):
         :param path: Path where the file gets saved
         :return: None
         """
-        with self.__lock:
+        with _LOCK:
             self.updated = datetime.datetime.now()
             with open(path, "w") as file_p:
                 json.dump(self.model_dump(mode="json"), file_p, indent=4)
