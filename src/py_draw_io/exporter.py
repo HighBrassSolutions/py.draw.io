@@ -7,7 +7,7 @@ from typing import Optional, List
 
 from py_draw_io import SETTINGS, EXPORT_CACHE
 from py_draw_io.boundary_container import BoundaryContainer
-from py_draw_io.cache import CacheFile, CacheValidationError
+from py_draw_io.cache import CacheValidationError
 from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
 from py_draw_io.document import Document
 

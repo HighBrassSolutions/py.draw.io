@@ -7,7 +7,7 @@ import json
 import threading
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from pydantic import BaseModel
 
@@ -42,11 +42,6 @@ class CacheFile(BaseModel):
     created: datetime.datetime
     updated: datetime.datetime
     files: Dict[str, FileCache]
-    _lock: threading.Lock
-
-    def __init__(self, **data: Any) -> None:
-        super().__init__(**data)
-        self._lock = threading.Lock()
 
     @classmethod
     @lru_cache
