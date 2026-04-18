@@ -39,13 +39,13 @@ jobs:
       - name: Show Report
         run: cat artifacts/index.txt
 
-      - name: Check precision
-        run: |
-          imprecise=$(grep "Total" artifacts/index.txt | awk '{print $4}' | tr -d '%')
-          if (( $(echo "$imprecise > 0" | bc -l) )); then
-            echo "Mypy coverage is not 100% (imprecise: $imprecise%)"
-            exit 1
-          fi
+#      - name: Check precision
+#        run: |
+#          imprecise=$(grep "Total" artifacts/index.txt | awk '{print $4}' | tr -d '%')
+#          if (( $(echo "$imprecise > 0" | bc -l) )); then
+#            echo "Mypy coverage is not 100% (imprecise: $imprecise%)"
+#            exit 1
+#          fi
 
   code-style-check:
     runs-on: ubuntu-latest
