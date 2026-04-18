@@ -5,7 +5,7 @@ from copy import copy
 from pathlib import Path
 from typing import Optional, List
 
-from py_draw_io import SETTINGS, EXPORT_CACHE
+from py_draw_io import SETTINGS
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cache import CacheValidationError
 from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
@@ -54,6 +54,9 @@ class DrawIoExporter:
         :param quality: Quality index for the draw.io export. Can remain the default if no problems arise
         :param temp_dir: Directory where temporary diagrams are stored that need to be created
         :param marker_layers: IDs or names of marker layers
+        :param use_cache: If True, existing files will not be overwritten.
+                          If False, export will happen no matter what.
+                          If None, Module settings will be used.
         if only a part of a diagram is to be exported
         """
         self._draw_io = draw_io
@@ -70,8 +73,8 @@ class DrawIoExporter:
     def _add_to_cache(self, source_diagram_file: Path, target_image_file: Path) -> None:
         if not self._caching_is_active():
             return
-        EXPORT_CACHE.add_to_cache(source_diagram_file, target_image_file)
-        EXPORT_CACHE.save()
+        SETTINGS.cache_file.add_to_cache(source_diagram_file, target_image_file)
+        SETTINGS.cache_file.save(SETTINGS.cache_file_location)
 
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
@@ -140,7 +143,7 @@ class DrawIoExporter:
 
     def _caching_is_active(self) -> bool:
         if self._use_cache is None:
-            return SETTINGS.cache_results
+            return SETTINGS.use_cache
         return self._use_cache
 
     def _export_can_be_skipped(self, source_diagram_file: Path, target_image_file: Path) -> bool:
@@ -153,7 +156,7 @@ class DrawIoExporter:
             return False
 
         try:
-            EXPORT_CACHE.check_file(source_diagram_file, target_image_file)
+            SETTINGS.cache_file.check_file(source_diagram_file, target_image_file)
         except CacheValidationError as err:
             self._logger.debug(f"Export can't be skipped: {err}")
             return False

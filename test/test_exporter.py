@@ -1,11 +1,14 @@
+import datetime
 import os
 import shutil
 from pathlib import Path
 
 import pytest
 
+from py_draw_io import SETTINGS
 from py_draw_io.cell_collection import CellNotFoundError, IllegalBoundaryError
 from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, ExportFailedError, LayerConfigurationError
+from test.conftest import Timer
 
 FILE_FOR_TEST_PATH = Path(__file__).parent / "test_diagram.drawio"
 
@@ -157,3 +160,57 @@ def test_export_illegal_boundary(tmp_path):
                                                          "pagerino",
                                                          out_path,
                                                          "eERzdUeXhqdjQ1jmuvG7-3")
+
+
+def test_use_of_cache(tmp_path):
+    print(tmp_path.as_posix())
+    out_path = tmp_path / "out.png"
+    assert not out_path.exists()
+
+    cache_file = tmp_path / "cache.json"
+    SETTINGS.switch_cache_file(cache_file)
+    assert not cache_file.exists()
+
+    # With deactivated caching, no cache file gets created
+    with Timer() as timer:
+        DrawIoExporter(use_cache=False).export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+    assert timer.duration > datetime.timedelta(seconds=1)
+    assert not cache_file.exists()
+
+    # With activated caching, cache file gets created
+    with Timer() as timer:
+        DrawIoExporter(use_cache=True).export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+    assert timer.duration > datetime.timedelta(seconds=1)
+    assert out_path.is_file()
+    assert cache_file.is_file()
+
+    # File is now part of cache and export gets skipped
+    with Timer() as timer:
+        DrawIoExporter(use_cache=True).export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+    assert timer.duration < datetime.timedelta(seconds=0.1)
+
+    # With deactivated caching, file gets exported even though it ts cached
+    with Timer() as timer:
+        DrawIoExporter(use_cache=False).export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+    assert timer.duration > datetime.timedelta(seconds=1)
+
+    # Delete exported file
+    os.remove(out_path)
+    assert not out_path.exists()
+
+    # Without file present, it gets exported even though the cache matches
+    with Timer() as timer:
+        DrawIoExporter(use_cache=True).export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+    assert timer.duration > datetime.timedelta(seconds=1)
+    assert out_path.is_file()
+
+    # Change hash of source file in cache db
+    file_cache = SETTINGS.cache_file.files[FILE_FOR_TEST_PATH.as_posix()]
+    buf_hash = file_cache.hash
+    file_cache.hash = "yolo123"
+
+    # Since hash no linger matches, export will happen again
+    with Timer() as timer:
+        DrawIoExporter(use_cache=True).export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+    assert timer.duration > datetime.timedelta(seconds=1)
+    assert SETTINGS.cache_file.files[FILE_FOR_TEST_PATH.as_posix()].hash == buf_hash

@@ -11,7 +11,6 @@ from typing import List, Dict
 
 from pydantic import BaseModel
 
-DEFAULT_CACHE_FILE = Path(".py_draw_io_cache")
 _LOCK = threading.Lock()
 
 
@@ -99,7 +98,7 @@ class CacheFile(BaseModel):
             raise CacheValidationError("Target File was not found in cache")
 
     @classmethod
-    def load(cls, path: Path = DEFAULT_CACHE_FILE, create_if_necessary: bool = False) -> CacheFile:
+    def load(cls, path: Path, create_if_necessary: bool = False) -> CacheFile:
         """
         Load a cache file from disk.
 
@@ -117,7 +116,7 @@ class CacheFile(BaseModel):
                 return CacheFile.new()
             raise err
 
-    def save(self, path: Path = DEFAULT_CACHE_FILE) -> None:
+    def save(self, path: Path) -> None:
         """
         Save the cache file to disk.
 
