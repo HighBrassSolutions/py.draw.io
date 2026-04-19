@@ -1,12 +1,16 @@
 from py_draw_io.arrow_cell import ArrowCell
+from py_draw_io.cell_collection import CellCollection
 from py_draw_io.geometry_cell import GeometryCell
+from py_draw_io.layer import Layer
 from py_draw_io.point import Point
+
+PARENT_LAYER = Layer(CellCollection(), "p_layer_11")
 
 
 def test_edge_property_set():
     """Test the correct encoding of the 'edge' attribute"""
 
-    arrow = ArrowCell("parent123", {}, "", None, Point(1, 2), Point(4, 5), [])
+    arrow = ArrowCell("parent123", {}, "", PARENT_LAYER, Point(1, 2), Point(4, 5), [])
     data = arrow.to_xml()
 
     assert data.attrs["edge"] == "1"
@@ -15,7 +19,7 @@ def test_edge_property_set():
 def test_relative_property_set():
     """Test the correct encoding of the 'relative' attribute"""
 
-    arrow = ArrowCell("parent123", {}, "", None, Point(1, 2), Point(4, 5), [])
+    arrow = ArrowCell("parent123", {}, "", PARENT_LAYER, Point(1, 2), Point(4, 5), [])
     data = arrow.to_xml()
     geometry_tag = data.find_all("mxGeometry")[0]
 
@@ -25,9 +29,9 @@ def test_relative_property_set():
 def test_point_source():
     """Test the correct encoding of a Point-source"""
 
-    target = GeometryCell("target_cell", {}, "", None, Point(0, 0), Point(5, 5))
+    target = GeometryCell("target_cell", {}, "", PARENT_LAYER, Point(0, 0), Point(5, 5))
     source = Point(1, 2)
-    arrow = ArrowCell("test_cell", {}, "", None, source, target, [])
+    arrow = ArrowCell("test_cell", {}, "", PARENT_LAYER, source, target, [])
     data = arrow.to_xml()
 
     assert "source" not in data.attrs
@@ -40,8 +44,8 @@ def test_point_target():
     """Test the correct encoding of a Point-target"""
 
     target = Point(1, 2)
-    source = GeometryCell("source_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arrow = ArrowCell("test_cell", {}, "", None, source, target, [])
+    source = GeometryCell("source_cell", {}, "", PARENT_LAYER, Point(0, 0), Point(5, 5))
+    arrow = ArrowCell("test_cell", {}, "", PARENT_LAYER, source, target, [])
     data = arrow.to_xml()
 
     assert "target" not in data.attrs
@@ -54,8 +58,8 @@ def test_cell_source():
     """Test the correct encoding of a Cell-source"""
 
     target = Point(1, 2)
-    source = GeometryCell("source_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arrow = ArrowCell("test_cell", {}, "", None, source, target, [])
+    source = GeometryCell("source_cell", {}, "", PARENT_LAYER, Point(0, 0), Point(5, 5))
+    arrow = ArrowCell("test_cell", {}, "", PARENT_LAYER, source, target, [])
     data = arrow.to_xml()
 
     assert data.attrs["source"] == "source_cell"
@@ -67,9 +71,9 @@ def test_cell_source():
 def test_cell_target():
     """Test the correct encoding of a Cell-target"""
 
-    target = GeometryCell("target_cell", {}, "", None, Point(0, 0), Point(5, 5))
+    target = GeometryCell("target_cell", {}, "", PARENT_LAYER, Point(0, 0), Point(5, 5))
     source = Point(1, 2)
-    arrow = ArrowCell("test_cell", {}, "", None, source, target, [])
+    arrow = ArrowCell("test_cell", {}, "", PARENT_LAYER, source, target, [])
     data = arrow.to_xml()
 
     assert data.attrs["target"] == "target_cell"
@@ -81,15 +85,15 @@ def test_cell_target():
 def test_waypoints():
     """Test the correct encoding of a Cell-target"""
 
-    target = GeometryCell("target_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    source = GeometryCell("source_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arrow = ArrowCell("test_cell", {}, "", None, source, target, [])
+    target = GeometryCell("target_cell", {}, "", PARENT_LAYER, Point(0, 0), Point(5, 5))
+    source = GeometryCell("source_cell", {}, "", PARENT_LAYER, Point(0, 0), Point(5, 5))
+    arrow = ArrowCell("test_cell", {}, "", PARENT_LAYER, source, target, [])
     data = arrow.to_xml()
 
     points = data.find_all("mxPoint")
     assert len(points) == 0
 
-    arrow = ArrowCell("test_cell", {}, "", None, source, target,
+    arrow = ArrowCell("test_cell", {}, "", PARENT_LAYER, source, target,
                       [Point(100, 200)])
     data = arrow.to_xml()
 

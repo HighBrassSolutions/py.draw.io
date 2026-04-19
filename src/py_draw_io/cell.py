@@ -97,8 +97,7 @@ class Cell(Fittable):
         """
         out = Tag(name="mxCell")
         out.attrs["id"] = self.id
-        if self.parent is not None:
-            out.attrs["parent"] = self.parent.id
+        out.attrs["parent"] = self.parent.id
         if self.value is not None:
             out.attrs["value"] = self.value
         if self.style is not None:

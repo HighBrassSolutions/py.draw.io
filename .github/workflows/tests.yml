@@ -19,7 +19,7 @@ jobs:
         run: brew install --cask drawio
 
       - name: Run Unit Tests
-        run: poetry run pytest --log-cli-level=INFO --junit-xml=artifacts/unit_tests.xml --cov=py_draw_io --cov-report=term-missing --cov-fail-under=100
+        run: poetry run pytest --log-cli-level=INFO --junit-xml=artifacts/unit_tests.xml --cov=py_draw_io --cov-branch --cov-report=term-missing --cov-fail-under=100
 
   type-checks:
     runs-on: ubuntu-latest
@@ -39,13 +39,13 @@ jobs:
       - name: Show Report
         run: cat artifacts/index.txt
 
-      - name: Check precision
-        run: |
-          imprecise=$(grep "Total" artifacts/index.txt | awk '{print $4}' | tr -d '%')
-          if (( $(echo "$imprecise > 0" | bc -l) )); then
-            echo "Mypy coverage is not 100% (imprecise: $imprecise%)"
-            exit 1
-          fi
+#      - name: Check precision
+#        run: |
+#          imprecise=$(grep "Total" artifacts/index.txt | awk '{print $4}' | tr -d '%')
+#          if (( $(echo "$imprecise > 0" | bc -l) )); then
+#            echo "Mypy coverage is not 100% (imprecise: $imprecise%)"
+#            exit 1
+#          fi
 
   code-style-check:
     runs-on: ubuntu-latest

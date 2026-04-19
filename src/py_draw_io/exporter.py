@@ -5,7 +5,9 @@ from copy import copy
 from pathlib import Path
 from typing import Optional, List
 
+from py_draw_io import SETTINGS
 from py_draw_io.boundary_container import BoundaryContainer
+from py_draw_io.cache import CacheValidationError
 from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
 from py_draw_io.document import Document
 
@@ -37,12 +39,14 @@ class DrawIoExporter:
     _quality: int
     _temp: Path
     _marker_layers: List[str]
+    _use_cache: Optional[bool]
     _logger: logging.Logger
 
     def __init__(self, draw_io: Path = DEFAULT_DRAWIO_LOCATION,
                  quality: int = DEFAULT_QUALITY,
                  temp_dir: Path = DEFAULT_TEMP_DIR,
-                 marker_layers: Optional[List[str]] = None):
+                 marker_layers: Optional[List[str]] = None,
+                 use_cache: Optional[bool] = None) -> None:
         """
         Create a new instance for the DrawIoExporter class.
 
@@ -50,11 +54,15 @@ class DrawIoExporter:
         :param quality: Quality index for the draw.io export. Can remain the default if no problems arise
         :param temp_dir: Directory where temporary diagrams are stored that need to be created
         :param marker_layers: IDs or names of marker layers
+        :param use_cache: If True, existing files will not be overwritten.
+                          If False, export will happen no matter what.
+                          If None, Module settings will be used.
         if only a part of a diagram is to be exported
         """
         self._draw_io = draw_io
         self._quality = quality
         self._temp = temp_dir
+        self._use_cache = use_cache
         self._logger = logging.getLogger(self.__class__.__name__)
 
         if marker_layers:
@@ -62,8 +70,18 @@ class DrawIoExporter:
         else:
             self._marker_layers = []
 
+    def _add_to_cache(self, source_diagram_file: Path, target_image_file: Path) -> None:
+        if not self._caching_is_active():
+            return
+        SETTINGS.cache_file.add_to_cache(source_diagram_file, target_image_file)
+        SETTINGS.cache_file.save(SETTINGS.cache_file_location)
+
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
+        if self._export_can_be_skipped(file, out_path):
+            return
+        self._add_to_cache(file, out_path)
+
         if out_path.is_file():
             os.remove(out_path)
         export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
@@ -122,6 +140,29 @@ class DrawIoExporter:
         """Export only a part of a diagram."""
         temp_file = self._build_temp_file(source, page_name, limit_export)
         self._export(temp_file, page_name, out_path)
+
+    def _caching_is_active(self) -> bool:
+        if self._use_cache is None:
+            return SETTINGS.use_cache
+        return self._use_cache
+
+    def _export_can_be_skipped(self, source_diagram_file: Path, target_image_file: Path) -> bool:
+        if not self._caching_is_active():
+            self._logger.debug("Export can't be skipped: cache is disabled")
+            return False
+
+        if not target_image_file.is_file():
+            self._logger.debug("Export can't be skipped: Target file does not exist")
+            return False
+
+        try:
+            SETTINGS.cache_file.check_file(source_diagram_file, target_image_file)
+        except CacheValidationError as err:
+            self._logger.debug(f"Export can't be skipped: {err}")
+            return False
+
+        self._logger.debug("Export will be skipped.")
+        return True
 
     def export(self, source: Path, page: str, out_path: Optional[Path], limit_export: Optional[str]) -> None:
         """
