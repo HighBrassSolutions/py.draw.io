@@ -64,6 +64,7 @@ class Diagram:
             return GeometryCell.from_xml(data, existing_cells, layers)
         except XmlDecodingError:
             pass
+        raise XmlDecodingError(f"Could not parse {data.tag}")
         return Cell.from_xml(data, existing_cells, layers)
 
     @classmethod
