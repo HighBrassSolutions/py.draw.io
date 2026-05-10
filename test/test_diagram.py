@@ -1,5 +1,4 @@
 import pytest
-from bs4 import BeautifulSoup
 
 from py_draw_io.arrow_cell import ArrowCell
 from py_draw_io.cell_collection import CellCollection
@@ -138,9 +137,9 @@ def test_from_xml_missing_reference_cells():
 
 def test_to_xml():
     model = GraphModel(10, 400, 600)
-    geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    layer = Layer(CellCollection([geo1, arr1]), "1")
+    layer = Layer(CellCollection(), "1")
+    geo1 = GeometryCell("geo_cell", {}, "", layer, Point(0, 0), Point(5, 5))
+    _ = ArrowCell("arrow_cell", {}, "", layer, geo1, Point(100, 100), [])
     diagram = Diagram("test_diag", "diag_id", [layer], model)
 
     xml_data = diagram.to_xml()
