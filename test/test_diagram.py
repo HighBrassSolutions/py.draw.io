@@ -134,6 +134,24 @@ def test_from_xml_missing_reference_cells():
         _ = Diagram.from_xml(data)
     assert "cells could not be properly connected to their parent" in str(err.value)
 
+def test_from_xml_broken_cell():
+    data = create_tag("""
+        <diagram id="diag1" name="data">
+            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+              <root>
+                <mxCell id="0" />
+                <mxCell id="1" parent="0" />
+                <mxCell id="geo1" parent="1" style="" value="">
+                </mxCell>
+              </root>
+            </mxGraphModel>
+          </diagram>
+        """, "diagram")
+
+    with pytest.raises(XmlDecodingError) as err:
+        _ = Diagram.from_xml(data)
+    assert "Could not parse geo1" in str(err.value)
+
 
 def test_to_xml():
     model = GraphModel(10, 400, 600)
