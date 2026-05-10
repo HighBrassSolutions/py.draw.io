@@ -126,9 +126,8 @@ def test_cell_and_point_target():
     """, "mxCell")
 
     target = GeometryCell("test2", {}, "", layer, Point(30, 55), Point(60, 77))
-    with pytest.raises(XmlDecodingError) as err:
-        _ = ArrowCell.from_xml(data, CellCollection([target]), [layer])
-    assert "target" in str(err.value)
+    arrow = ArrowCell.from_xml(data, CellCollection([target]), [layer])
+    assert arrow.target == target
 
 
 def test_two_points_as_target():

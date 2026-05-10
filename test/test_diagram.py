@@ -39,9 +39,13 @@ def test_from_xml_success():
             </mxCell>
             <mxCell id="geo1" parent="1" style="" value="" vertex="1">
               <mxGeometry height="60" width="120" x="140" y="150" as="geometry" />
+              <mxPoint x="330" y="180" as="targetPoint"/>
+              <mxPoint x="330" y="200" as="sourcePoint"/>
             </mxCell>
-            <mxCell id="geo2" parent="1" style=" value="" vertex="1">
+            <mxCell id="geo2" parent="1" style="" value="" vertex="1">
               <mxGeometry height="60" width="120" x="450" y="160" as="geometry" />
+              <mxPoint x="180" y="330" as="targetPoint"/>
+              <mxPoint x="330" y="200" as="sourcePoint"/>
             </mxCell>
           </root>
         </mxGraphModel>
@@ -119,7 +123,7 @@ def test_from_xml_missing_reference_cells():
                 <mxCell id="geo1" parent="non_existent" style="" value="" vertex="1">
                   <mxGeometry height="60" width="120" x="140" y="150" as="geometry" />
                 </mxCell>
-                <mxCell id="geo2" parent="1" style=" value="" vertex="1">
+                <mxCell id="geo2" parent="1" style="" value="" vertex="1">
                   <mxGeometry height="60" width="120" x="450" y="160" as="geometry" />
                 </mxCell>
               </root>
