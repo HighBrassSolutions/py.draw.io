@@ -1,5 +1,4 @@
 import pytest
-from bs4 import BeautifulSoup
 
 from py_draw_io.arrow_cell import ArrowCell
 from py_draw_io.cell_collection import CellCollection
@@ -39,9 +38,13 @@ def test_from_xml_success():
             </mxCell>
             <mxCell id="geo1" parent="1" style="" value="" vertex="1">
               <mxGeometry height="60" width="120" x="140" y="150" as="geometry" />
+              <mxPoint x="330" y="180" as="targetPoint"/>
+              <mxPoint x="330" y="200" as="sourcePoint"/>
             </mxCell>
-            <mxCell id="geo2" parent="1" style=" value="" vertex="1">
+            <mxCell id="geo2" parent="1" style="" value="" vertex="1">
               <mxGeometry height="60" width="120" x="450" y="160" as="geometry" />
+              <mxPoint x="180" y="330" as="targetPoint"/>
+              <mxPoint x="330" y="200" as="sourcePoint"/>
             </mxCell>
           </root>
         </mxGraphModel>
@@ -119,7 +122,7 @@ def test_from_xml_missing_reference_cells():
                 <mxCell id="geo1" parent="non_existent" style="" value="" vertex="1">
                   <mxGeometry height="60" width="120" x="140" y="150" as="geometry" />
                 </mxCell>
-                <mxCell id="geo2" parent="1" style=" value="" vertex="1">
+                <mxCell id="geo2" parent="1" style="" value="" vertex="1">
                   <mxGeometry height="60" width="120" x="450" y="160" as="geometry" />
                 </mxCell>
               </root>
@@ -131,12 +134,30 @@ def test_from_xml_missing_reference_cells():
         _ = Diagram.from_xml(data)
     assert "cells could not be properly connected to their parent" in str(err.value)
 
+def test_from_xml_broken_cell():
+    data = create_tag("""
+        <diagram id="diag1" name="data">
+            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+              <root>
+                <mxCell id="0" />
+                <mxCell id="1" parent="0" />
+                <mxCell id="geo1" parent="1" style="" value="">
+                </mxCell>
+              </root>
+            </mxGraphModel>
+          </diagram>
+        """, "diagram")
+
+    with pytest.raises(XmlDecodingError) as err:
+        _ = Diagram.from_xml(data)
+    assert "Could not parse geo1" in str(err.value)
+
 
 def test_to_xml():
     model = GraphModel(10, 400, 600)
-    geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    layer = Layer(CellCollection([geo1, arr1]), "1")
+    layer = Layer(CellCollection(), "1")
+    geo1 = GeometryCell("geo_cell", {}, "", layer, Point(0, 0), Point(5, 5))
+    _ = ArrowCell("arrow_cell", {}, "", layer, geo1, Point(100, 100), [])
     diagram = Diagram("test_diag", "diag_id", [layer], model)
 
     xml_data = diagram.to_xml()

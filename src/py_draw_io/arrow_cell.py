@@ -144,9 +144,14 @@ class ArrowCell(Cell):
                     raise XmlDecodingError("Arrow has more than one source defined")
                 source = point_obj
             elif point_type == "targetPoint":
-                if target is not None:
-                    raise XmlDecodingError("Arrow has more than one target defined")
-                target = point_obj
+                if target is None:
+                    target = point_obj
+                elif isinstance(target, Point):
+                    # A cell may not have two points as target
+                    raise XmlDecodingError(f"Illegal point type: {point_type}")
+                else:
+                    # If there is already a cell selected as target, points are just ignored
+                    pass
             else:
                 raise XmlDecodingError(f"Illegal point type: {point_type}")
 
