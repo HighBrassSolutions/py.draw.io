@@ -59,5 +59,26 @@ jobs:
           pip install poetry
           poetry install
 
-      - name: Run ruff code-style-checks
+      - name: Run ruff code-style-checks for module
         run: poetry run ruff check src/py_draw_io
+
+      - name: Run ruff code-style-checks for scripts
+        run: poetry run ruff check scripts/
+
+  docs-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Poetry
+        run: |
+          pip install poetry
+          poetry install
+
+      - name: Build documentation
+        run: poetry run mkdocs build --strict
+
+      - name: Verify docs output exists
+        run: test -f artifacts/docs/index.html

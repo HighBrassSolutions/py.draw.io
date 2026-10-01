@@ -36,6 +36,18 @@ test = [
     "mypy (>=2.0.0,<3.0.0)",
     "ruff (>=0.15.6,<0.16.0)"
 ]
+docs = [
+    "mkdocs (>=1.6.1,<2.0.0)",
+    "mkdocs-material (>=9.7.7,<10.0.0)",
+    "mkdocstrings[python] (>=1.0.6,<2.0.0)",
+    # Exact-pinned: later releases of these three add a dependency on "properdocs", a
+    # disputed fork pulled in via a PyPI ownership takeover (see mkdocs-material's blog,
+    # Feb 2026). These versions predate that and depend only on real mkdocs. Do not
+    # bump past these without re-checking each package's requires_dist on PyPI first.
+    "mkdocs-gen-files (==0.6.0)",
+    "mkdocs-literate-nav (==0.6.2)",
+    "mkdocs-section-index (==0.3.10)",
+]
 
 [tool.mypy]
 strict = true
@@ -98,6 +110,9 @@ ignore = [
     "S101",
     "ANN"
 ]
+# scripts/ holds standalone build-time utilities invoked by file path (e.g. from mkdocs.yml),
+# not an importable package - adding an __init__.py here would misrepresent that.
+"scripts/**/*.py" = ["INP001"]
 
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"
