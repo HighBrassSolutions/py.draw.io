@@ -6,7 +6,7 @@ authors = [
     { name = "Johannes Grothe", email = "johannesgrothe@proton.me" }
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "typer (>=0.25.0,<0.26.0)",
     "beautifulsoup4 (>=4.14.2,<5.0.0)",
@@ -25,9 +25,6 @@ pythonpath = [
     "src"
 ]
 
-#[tool.poetry]
-#package-mode = false
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -42,9 +39,11 @@ test = [
 
 [tool.mypy]
 strict = true
+python_version = "3.10"
 
 [tool.ruff]
 line-length = 120
+target-version = "py310"
 
 [tool.ruff.lint]
 # https://github.com/astral-sh/ruff/issues/6606
@@ -86,13 +85,19 @@ ignore = [
     "D203",
     "TRY003", # XmlDecodingError etc. are general-purpose with genuinely distinct per-site messages;
     # moving them into __init__ would be a no-op, not a real fix.
+    "PERF203", # try/except-per-iteration here is "try next candidate on failure" (layers, cell types);
+    # moving it outside the loop would abort on the first failure instead of trying the rest.
 ]
 
 [tool.ruff.lint.per-file-ignores]
 # Fixtures are injected by name; leaving one unused (e.g. to just get a temp dir) is normal in tests.
 # `assert` is the standard pytest idiom, not a security concern.
 # Test functions aren't type-annotated in this project (mypy doesn't check test/ either).
-"test/**/*.py" = ["ARG001", "S101", "ANN"]
+"test/**/*.py" = [
+    "ARG001",
+    "S101",
+    "ANN"
+]
 
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"
