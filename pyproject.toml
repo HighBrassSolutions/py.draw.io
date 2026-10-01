@@ -117,5 +117,15 @@ ignore = [
 # not an importable package - adding an __init__.py here would misrepresent that.
 "scripts/**/*.py" = ["INP001"]
 
+[tool.ruff.lint.per-file-ignores]
+# Fixtures are injected by name; leaving one unused (e.g. to just get a temp dir) is normal in tests.
+# `assert` is the standard pytest idiom, not a security concern.
+# Test functions aren't type-annotated in this project (mypy doesn't check test/ either).
+"test/**/*.py" = [
+    "ARG001",
+    "S101",
+    "ANN"
+]
+
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"
