@@ -1,32 +1,34 @@
 """Module for the Cell class."""
 from __future__ import annotations
+
+import contextlib
 import copy
-from typing import Optional, Union, List, Dict
-from bs4 import Tag
+from abc import ABC
 from typing import TYPE_CHECKING
 
-from py_draw_io.boundary_container import BoundaryContainer
+from bs4 import Tag
+
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.fittable import Fittable
-from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
+from py_draw_io.helpers import get_string_attribute
 
 if TYPE_CHECKING:
     from py_draw_io.cell_collection import CellCollection
     from py_draw_io.layer import Layer
 
 
-class Cell(Fittable):
+class Cell(Fittable, ABC):
     """Represents a basic cell with no geometry and also works as parent class for all cells containing geometries."""
 
     id: str
-    style: Optional[Dict[str, Union[int, str, None]]]
-    value: Optional[str]
-    parent: Union[Cell, Layer]
-    children: List[Cell]
+    style: dict[str, int | str | None] | None
+    value: str | None
+    parent: Cell | Layer
+    children: list[Cell]
     contains_geometry: bool
 
-    def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]],
-                 value: Optional[str], parent: Union[Cell, Layer]):
+    def __init__(self, cell_id: str, style: dict[str, int | str | None] | None,
+                 value: str | None, parent: Cell | Layer):
         """
         Create a new instance of the Cell class.
 
@@ -57,15 +59,6 @@ class Cell(Fittable):
             return False
         return self.id == other.id
 
-    def fits_inside(self, other: BoundaryContainer) -> bool:
-        """
-        Determine if this object is fully contained within the other one.
-
-        :param other: Container defining the boundary this object needs to be fully enclosed by
-        :return:
-        """
-        return True
-
     @property
     def parent_layer(self) -> Layer:
         """The layer this cell is part of."""
@@ -75,13 +68,10 @@ class Cell(Fittable):
         return parent
 
     @classmethod
-    def _encode_style(cls, style: Dict[str, Union[int, str, None]]) -> str:
+    def _encode_style(cls, style: dict[str, int | str | None]) -> str:
         buf = copy.deepcopy(style)
         geo_type = buf.pop("geometry_type", None)
-        if geo_type is not None:
-            out = f"{geo_type};"
-        else:
-            out = ""
+        out = f"{geo_type};" if geo_type is not None else ""
         for key, value in buf.items():
             if value is None:
                 buf[key] = "none"
@@ -105,7 +95,7 @@ class Cell(Fittable):
         return out
 
     @classmethod
-    def _decode_style(cls, data: Tag) -> Optional[Dict[str, Union[int, str, None]]]:
+    def _decode_style(cls, data: Tag) -> dict[str, int | str | None] | None:
         if "style" not in data.attrs:
             return None
 
@@ -120,11 +110,9 @@ class Cell(Fittable):
         if len(keywords) > 1:
             raise XmlDecodingError("More than one keyword detected")
         for key, raw_value in pairs:
-            final_value: Union[int, str, None] = raw_value
-            try:
+            final_value: int | str | None = raw_value
+            with contextlib.suppress(ValueError):
                 final_value = int(raw_value)
-            except ValueError:
-                pass
             if raw_value == "none":
                 final_value = None
             style[key] = final_value
@@ -135,7 +123,7 @@ class Cell(Fittable):
         return style
 
     @classmethod
-    def _decode_parent(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> Union[Cell, Layer]:
+    def _decode_parent(cls, data: Tag, existing_cells: CellCollection, layers: list[Layer]) -> Cell | Layer:
         if "parent" not in data.attrs:
             raise XmlDecodingError("No parent tag found")
         parent_id = get_string_attribute(data, "parent")
@@ -143,22 +131,3 @@ class Cell(Fittable):
             if layer.id == parent_id:
                 return layer
         return existing_cells.find_by_id(parent_id)
-
-    @classmethod
-    def from_xml(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> Cell:
-        """
-        Create a Cell from the given xml data.
-
-        :param data: XML tag to create the Cell from
-        :param existing_cells: Cells already parsed from the XML document
-        :param layers: Layers parsed from the XML document
-        :return: The created Cell
-        :raises XmlDecodingError: If any of the required attributes is missing
-        """
-        cell_id = get_string_attribute(data, "id")
-        parent = cls._decode_parent(data, existing_cells, layers)
-        style = cls._decode_style(data)
-        value = get_optional_string_attribute(data, "value")
-
-        out = Cell(cell_id, style, value, parent)
-        return out

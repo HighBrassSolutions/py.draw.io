@@ -1,5 +1,6 @@
 """Module containing the GraphModel class."""
 from __future__ import annotations
+
 from bs4 import Tag
 
 from py_draw_io.helpers import get_string_attribute

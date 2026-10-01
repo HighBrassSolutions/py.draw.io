@@ -6,6 +6,7 @@ from py_draw_io.cell_collection import CellCollection, CellNotFoundError, Illega
 from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.layer import Layer
 from py_draw_io.point import Point
+from test.cell import DummyCell
 from test.helpers import DummyBoundaryContainer
 
 
@@ -15,14 +16,14 @@ def test_to_string():
     assert "0" in str(data)
     assert str(data) == repr(data)
 
-    cell = Cell("test_cell", None, "", None)
+    cell = DummyCell("test_cell", None, "", None)
     data = CellCollection([cell])
     assert "1" in str(data)
     assert str(data) == repr(data)
 
 
 def test_append():
-    cell = Cell("test_cell", None, "", None)
+    cell = DummyCell("test_cell", None, "", None)
     data = CellCollection()
 
     assert len(data) == 0
@@ -32,13 +33,13 @@ def test_append():
 
 def test_getitem():
     layer = Layer(CellCollection(), "1")
-    cell = Cell("test_cell", None, "", layer)
+    cell = DummyCell("test_cell", None, "", layer)
     data = CellCollection([cell])
     assert data[0] == cell
 
 
 def test_constructor():
-    cell = Cell("test_cell", None, "", None)
+    cell = DummyCell("test_cell", None, "", None)
 
     assert len(CellCollection()) == 0
     assert len(CellCollection([])) == 0
@@ -46,12 +47,12 @@ def test_constructor():
 
 
 def test_length():
-    base_cell_1 = Cell("bc1", None, "", None)
-    base_cell_2 = Cell("bc2", None, "", None)
-    base_cell_3 = Cell("bc3", None, "", None)
-    child_cell_1 = Cell("bc1", None, "", base_cell_1)
-    _ = Cell("bc1", None, "", base_cell_1)
-    _ = Cell("bc1", None, "", child_cell_1)
+    base_cell_1 = DummyCell("bc1", None, "", None)
+    base_cell_2 = DummyCell("bc2", None, "", None)
+    base_cell_3 = DummyCell("bc3", None, "", None)
+    child_cell_1 = DummyCell("bc1", None, "", base_cell_1)
+    _ = DummyCell("bc1", None, "", base_cell_1)
+    _ = DummyCell("bc1", None, "", child_cell_1)
 
     assert len(CellCollection([base_cell_1, base_cell_2, base_cell_3])) == 6
     assert len(CellCollection([base_cell_1])) == 4
@@ -59,12 +60,12 @@ def test_length():
 
 
 def test_find_by_id():
-    base_cell_1 = Cell("bc1", None, "", None)
-    base_cell_2 = Cell("bc2", None, "", None)
-    base_cell_3 = Cell("bc3", None, "", None)
-    child_cell_1 = Cell("cc1", None, "", base_cell_1)
-    child_cell_2 = Cell("cc2", None, "", base_cell_1)
-    grandchild_cell_1 = Cell("gc1", None, "", child_cell_1)
+    base_cell_1 = DummyCell("bc1", None, "", None)
+    base_cell_2 = DummyCell("bc2", None, "", None)
+    base_cell_3 = DummyCell("bc3", None, "", None)
+    child_cell_1 = DummyCell("cc1", None, "", base_cell_1)
+    child_cell_2 = DummyCell("cc2", None, "", base_cell_1)
+    grandchild_cell_1 = DummyCell("gc1", None, "", child_cell_1)
     collection = CellCollection([base_cell_1, base_cell_2, base_cell_3])
 
     assert collection.find_by_id("bc1") == base_cell_1

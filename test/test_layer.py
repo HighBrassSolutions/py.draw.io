@@ -1,6 +1,6 @@
-from py_draw_io.cell import Cell
 from py_draw_io.cell_collection import CellCollection
 from py_draw_io.layer import Layer
+from test.cell import DummyCell
 
 
 def test_to_string():
@@ -11,7 +11,7 @@ def test_to_string():
     assert "12name" in str(layer)
     assert "0 cells" in str(layer)
     assert repr(layer) == str(layer)
-    cell = Cell("yolo", {}, None, layer)
+    cell = DummyCell("yolo", {}, None, layer)
     assert "1 cells" in str(layer)
 
 

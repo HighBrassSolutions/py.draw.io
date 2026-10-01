@@ -7,7 +7,8 @@ import pytest
 
 from py_draw_io import SETTINGS
 from py_draw_io.cell_collection import CellNotFoundError, IllegalBoundaryError
-from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, ExportFailedError, LayerConfigurationError
+from py_draw_io.document import NoDrawioDocumentError
+from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, LayerConfigurationError
 from test.conftest import Timer
 
 FILE_FOR_TEST_PATH = Path(__file__).parent / "test_diagram.drawio"
@@ -115,7 +116,7 @@ def test_export_failure(export_temp):
     files = [x for x in export_temp.iterdir() if x.is_file()]
     assert len(files) == 1
 
-    with pytest.raises(ExportFailedError):
+    with pytest.raises(NoDrawioDocumentError):
         DrawIoExporter().export(dummy_file, "pagerino", None, None)
 
     files = [x for x in export_temp.iterdir() if x.is_file()]
@@ -131,7 +132,6 @@ def test_success(tmp_path):
 
     DrawIoExporter().export(FILE_FOR_TEST_PATH, "pagerino", out_path, "eERzdUeXhqdjQ1jmuvG7-2")
 
-    print(out_path.stat().st_size)
     assert out_path.stat().st_size < 3000
 
 
@@ -163,7 +163,6 @@ def test_export_illegal_boundary(tmp_path):
 
 
 def test_use_of_cache(tmp_path):
-    print(tmp_path.as_posix())
     out_path = tmp_path / "out.png"
     assert not out_path.exists()
 

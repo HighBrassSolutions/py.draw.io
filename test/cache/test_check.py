@@ -1,7 +1,8 @@
 import json
+
 import pytest
 
-from py_draw_io.cache import CacheValidationError, CacheFile
+from py_draw_io.cache import CacheFile, CacheValidationError
 
 
 def test_check_file(tmp_path):
@@ -25,10 +26,10 @@ def test_check_file(tmp_path):
                 source2.as_posix(): {
                     "hash": "d35de2bb4264afdf24b3f94b71848db0a8b799246e7620f2aca5ddf3d91438d2",
                     "files": [
-                        target1.as_posix()
-                    ]
-                }
-            }
+                        target1.as_posix(),
+                    ],
+                },
+            },
         }, file_p)
 
     cache = CacheFile.load(cache_file)
@@ -60,10 +61,10 @@ def test_check_file_hash_does_not_match(tmp_path):
                 source1.as_posix(): {
                     "hash": "d35de2bb4264afdf24b3f94b71848db0a8b799246e7620f2aca5ddf3d91438d2",
                     "files": [
-                        target1.as_posix()
-                    ]
-                }
-            }
+                        target1.as_posix(),
+                    ],
+                },
+            },
         }, file_p)
 
     cache = CacheFile.load(cache_file)

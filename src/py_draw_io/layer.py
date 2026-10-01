@@ -1,10 +1,10 @@
 """Module for the Layer class."""
 from __future__ import annotations
-from typing import Optional
+
 from bs4 import Tag
 
 from py_draw_io.cell_collection import CellCollection
-from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
+from py_draw_io.helpers import get_optional_string_attribute, get_string_attribute
 
 
 class Layer:
@@ -12,9 +12,9 @@ class Layer:
 
     cells: CellCollection
     id: str
-    name: Optional[str]
+    name: str | None
 
-    def __init__(self, cells: CellCollection, layer_id: str, name: Optional[str] = None) -> None:
+    def __init__(self, cells: CellCollection, layer_id: str, name: str | None = None) -> None:
         """
         Create a new instance of the Layer class.
 
@@ -57,5 +57,4 @@ class Layer:
         """
         layer_id = get_string_attribute(data, "id")
         name = get_optional_string_attribute(data, "value")
-        out = Layer(CellCollection(), layer_id, name)
-        return out
+        return Layer(CellCollection(), layer_id, name)

@@ -1,5 +1,6 @@
 """Module for the Point class."""
 from __future__ import annotations
+
 from .boundary_container import BoundaryContainer
 from .fittable import Fittable
 

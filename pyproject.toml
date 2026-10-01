@@ -52,9 +52,37 @@ line-length = 120
 
 [tool.ruff.lint]
 # https://github.com/astral-sh/ruff/issues/6606
-select = ["E", "F", "D"]
+select = [
+    "E", "F", "D",
+    "I",   # isort
+    "N",   # pep8-naming
+    "A",   # builtin shadowing
+    "B",   # bugbear
+    "C4",  # comprehensions
+    "SIM", # simplify
+    "COM", # trailing comma
+    "ISC", # implicit str concat
+    "Q",   # quotes
+    "TID", # tidy imports
+    "PIE", # misc lints
+    "W",   # pycodestyle warnings
+    "FA",  # future-annotations
+    "T20", # print statements
+    "RET", # return statements
+    "ARG", # unused arguments
+    "PERF",# performance
+    "RUF", # ruff-specific rules
+    "G",   # logging format
+    "ERA", # commented-out code
+    "UP",  # pyupgrade
+    "INP", # implicit namespace package
+]
 #select = ["E", "F"]
 ignore = ["D212", "D105", "D203"]
+
+[tool.ruff.lint.per-file-ignores]
+# Fixtures are injected by name; leaving one unused (e.g. to just get a temp dir) is normal in tests.
+"test/**/*.py" = ["ARG001"]
 
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"

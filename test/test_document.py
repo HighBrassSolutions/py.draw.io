@@ -3,7 +3,7 @@ import pytest
 from py_draw_io.arrow_cell import ArrowCell
 from py_draw_io.cell_collection import CellCollection
 from py_draw_io.diagram import Diagram
-from py_draw_io.document import Document, DiagramNotFoundError, NoDrawioDocumentError
+from py_draw_io.document import DiagramNotFoundError, Document, NoDrawioDocumentError
 from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.graph_model import GraphModel
 from py_draw_io.layer import Layer

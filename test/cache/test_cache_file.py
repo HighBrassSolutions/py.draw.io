@@ -1,5 +1,6 @@
 import datetime
 import json
+
 import pytest
 from pydantic import ValidationError
 
@@ -40,7 +41,7 @@ def test_load_success(tmp_path):
         json.dump({
             "created": created.isoformat(),
             "updated": updated.isoformat(),
-            "files": {}
+            "files": {},
         }, file_p)
 
     cache = CacheFile.load(tmp_file)

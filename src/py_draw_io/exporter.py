@@ -3,12 +3,11 @@ import logging
 import os
 from copy import copy
 from pathlib import Path
-from typing import Optional, List
 
 from py_draw_io import SETTINGS
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cache import CacheValidationError
-from py_draw_io.cell_collection import IllegalBoundaryError, CellCollection
+from py_draw_io.cell_collection import CellCollection, IllegalBoundaryError
 from py_draw_io.document import Document
 
 DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
@@ -38,15 +37,15 @@ class DrawIoExporter:
     _draw_io: Path
     _quality: int
     _temp: Path
-    _marker_layers: List[str]
-    _use_cache: Optional[bool]
+    _marker_layers: list[str]
+    _use_cache: bool | None
     _logger: logging.Logger
 
     def __init__(self, draw_io: Path = DEFAULT_DRAWIO_LOCATION,
                  quality: int = DEFAULT_QUALITY,
                  temp_dir: Path = DEFAULT_TEMP_DIR,
-                 marker_layers: Optional[List[str]] = None,
-                 use_cache: Optional[bool] = None) -> None:
+                 marker_layers: list[str] | None = None,
+                 use_cache: bool | None = None) -> None:
         """
         Create a new instance for the DrawIoExporter class.
 
@@ -76,6 +75,13 @@ class DrawIoExporter:
         SETTINGS.cache_file.add_to_cache(source_diagram_file, target_image_file)
         SETTINGS.cache_file.save(SETTINGS.cache_file_location)
 
+    @staticmethod
+    def _get_page_index(file: Path, page: str) -> int:
+        """Determine the 1-based index of the page with the given name or ID inside the file."""
+        document = Document.load(file)
+        diagram = document.get_diagram(page)
+        return document.diagrams.index(diagram) + 1
+
     def _export(self, file: Path, page: str, out_path: Path) -> None:
         """Export the given diagram using the draw.io executable."""
         if self._export_can_be_skipped(file, out_path):
@@ -84,12 +90,14 @@ class DrawIoExporter:
 
         if out_path.is_file():
             os.remove(out_path)
-        export_com = f"{self._draw_io} {file} --export -p {page} -s {self._quality} -t -o {out_path} --theme light"
+        page_index = self._get_page_index(file, page)
+        export_com = (f"{self._draw_io} {file} --export -p {page_index} -s {self._quality} "
+                       f"-t -o {out_path} --theme light")
         return_code = os.system(export_com)
         if not os.path.isfile(out_path):
             raise ExportFailedError(return_code)
 
-    def _create_default_path(self, page: str, limit_export: Optional[str]) -> Path:
+    def _create_default_path(self, page: str, limit_export: str | None) -> Path:
         """Create a default path for image exports based on the file name and exported area."""
         out_path = self._temp
         if limit_export:
@@ -158,13 +166,13 @@ class DrawIoExporter:
         try:
             SETTINGS.cache_file.check_file(source_diagram_file, target_image_file)
         except CacheValidationError as err:
-            self._logger.debug(f"Export can't be skipped: {err}")
+            self._logger.debug("Export can't be skipped: %s", err)
             return False
 
         self._logger.debug("Export will be skipped.")
         return True
 
-    def export(self, source: Path, page: str, out_path: Optional[Path], limit_export: Optional[str]) -> None:
+    def export(self, source: Path, page: str, out_path: Path | None, limit_export: str | None) -> None:
         """
         Export the given diagram (or a part of it) into an image.
 
@@ -180,10 +188,7 @@ class DrawIoExporter:
         if not source.name.endswith(".drawio"):
             raise IllegalExtensionError(f"{source} is neither a .drawio nor .xml file")
 
-        if out_path is None:
-            export_path = self._create_default_path(page, limit_export)
-        else:
-            export_path = out_path
+        export_path = self._create_default_path(page, limit_export) if out_path is None else out_path
 
         os.makedirs(export_path.parent, exist_ok=True)
 

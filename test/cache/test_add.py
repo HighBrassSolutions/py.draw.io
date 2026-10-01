@@ -47,10 +47,10 @@ def test_different_hash(tmp_path):
                 source1.as_posix(): {
                     "hash": "yolo123",
                     "files": [
-                        target1.as_posix()
-                    ]
-                }
-            }
+                        target1.as_posix(),
+                    ],
+                },
+            },
         }, file_p)
 
     cache = CacheFile.load(cache_file)

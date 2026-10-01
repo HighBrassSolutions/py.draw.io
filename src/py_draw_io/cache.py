@@ -7,7 +7,6 @@ import json
 import threading
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Dict
 
 from pydantic import BaseModel
 
@@ -22,7 +21,7 @@ class FileCache(BaseModel):
     """Cache for a single diagram file object."""
 
     hash: str
-    files: List[str]
+    files: list[str]
 
     @classmethod
     def new(cls, file_hash: str) -> FileCache:
@@ -40,7 +39,7 @@ class CacheFile(BaseModel):
 
     created: datetime.datetime
     updated: datetime.datetime
-    files: Dict[str, FileCache]
+    files: dict[str, FileCache]
 
     @classmethod
     @lru_cache
@@ -87,8 +86,8 @@ class CacheFile(BaseModel):
         source_file_hash = self._get_file_hash(source_diagram_file)
         try:
             file_cache = self.files[source_diagram_file.as_posix()]
-        except KeyError:
-            raise CacheValidationError("Source File was not found in cache")
+        except KeyError as err:
+            raise CacheValidationError("Source File was not found in cache") from err
 
         if file_cache.hash != source_file_hash:
             raise CacheValidationError("Source File hash does not match cached one")
@@ -107,9 +106,8 @@ class CacheFile(BaseModel):
         :return: The loaded cache file
         """
         try:
-            with _LOCK:
-                with open(path, "r") as file_p:
-                    data = json.load(file_p)
+            with _LOCK, open(path) as file_p:
+                data = json.load(file_p)
             return CacheFile.model_validate(data)
         except FileNotFoundError as err:
             if create_if_necessary:
