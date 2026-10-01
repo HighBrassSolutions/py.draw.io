@@ -77,6 +77,8 @@ select = [
     "UP",  # pyupgrade
     "INP", # implicit namespace package
     "S",   # flake8-bandit (security)
+    "PTH", # use pathlib instead of os.path
+    "ANN", # type annotations
 ]
 #select = ["E", "F"]
 ignore = ["D212", "D105", "D203"]
@@ -84,7 +86,8 @@ ignore = ["D212", "D105", "D203"]
 [tool.ruff.lint.per-file-ignores]
 # Fixtures are injected by name; leaving one unused (e.g. to just get a temp dir) is normal in tests.
 # `assert` is the standard pytest idiom, not a security concern.
-"test/**/*.py" = ["ARG001", "S101"]
+# Test functions aren't type-annotated in this project (mypy doesn't check test/ either).
+"test/**/*.py" = ["ARG001", "S101", "ANN"]
 
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"

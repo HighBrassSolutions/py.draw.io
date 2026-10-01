@@ -65,7 +65,7 @@ def test_length():
 
 def test_load_success(temp_dir):
     temp_file = temp_dir / "test_file.drawio"
-    with open(temp_file, "w") as file_p:
+    with temp_file.open("w") as file_p:
         file_p.write(DUMMY_DATA)
 
     diagram = Document.load(temp_file)
@@ -76,7 +76,7 @@ def test_load_success(temp_dir):
 
 def test_load_empty_file(temp_dir):
     temp_file = temp_dir / "test_file.drawio"
-    with open(temp_file, "w") as file_p:
+    with temp_file.open("w") as file_p:
         file_p.write("")
 
     with pytest.raises(NoDrawioDocumentError) as err:

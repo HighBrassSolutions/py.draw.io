@@ -27,7 +27,7 @@ def test_load_not_found(tmp_path):
 
 def test_load_decode_error(tmp_path):
     tmp_file = tmp_path / "file.json"
-    with open(tmp_file, "w") as file_p:
+    with tmp_file.open("w") as file_p:
         file_p.write("{}")
     with pytest.raises(ValidationError):
         CacheFile.load(tmp_file)
@@ -37,7 +37,7 @@ def test_load_success(tmp_path):
     tmp_file = tmp_path / "file.json"
     created = datetime.datetime.now()
     updated = datetime.datetime.now() + datetime.timedelta(days=1)
-    with open(tmp_file, "w") as file_p:
+    with tmp_file.open("w") as file_p:
         json.dump({
             "created": created.isoformat(),
             "updated": updated.isoformat(),

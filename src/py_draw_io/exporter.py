@@ -1,6 +1,5 @@
 """Module for the DrawIoExporter class and its Exceptions."""
 import logging
-import os
 import subprocess
 from copy import copy
 from pathlib import Path
@@ -90,7 +89,7 @@ class DrawIoExporter:
         self._add_to_cache(file, out_path)
 
         if out_path.is_file():
-            os.remove(out_path)
+            out_path.unlink()
         page_index = self._get_page_index(file, page)
         export_args = [
             str(self._draw_io),
@@ -104,7 +103,7 @@ class DrawIoExporter:
         ]
         # export_args is built entirely from internal config/Path values, not external input.
         result = subprocess.run(export_args, capture_output=True, text=True, check=False)  # noqa: S603
-        if not os.path.isfile(out_path):
+        if not out_path.is_file():
             raise ExportFailedError(result.returncode)
 
     def _create_default_path(self, page: str, limit_export: str | None) -> Path:
@@ -121,7 +120,7 @@ class DrawIoExporter:
         source_file_name = Path(source).name.rstrip(".drawio").rstrip(".xml")
         target_file_name = f"{source_file_name}_{page_name}_{limit_export}.drawio"
         temp_file_path = self._temp / "diagrams" / target_file_name
-        os.makedirs(temp_file_path.parent, exist_ok=True)
+        temp_file_path.parent.mkdir(parents=True, exist_ok=True)
         return temp_file_path
 
     def _build_temp_file(self, source: Path, page_name: str, limit_export: str) -> Path:
@@ -200,7 +199,7 @@ class DrawIoExporter:
 
         export_path = self._create_default_path(page, limit_export) if out_path is None else out_path
 
-        os.makedirs(export_path.parent, exist_ok=True)
+        export_path.parent.mkdir(parents=True, exist_ok=True)
 
         if limit_export is None:
             self._export(source, page, export_path)

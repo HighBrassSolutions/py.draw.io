@@ -11,7 +11,7 @@ class Point(Fittable):
     x: float
     y: float
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float, y: float) -> None:
         """
         Create a new instance of the Point class.
 

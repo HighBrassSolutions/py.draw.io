@@ -1,5 +1,4 @@
 import datetime
-import os
 import shutil
 from pathlib import Path
 
@@ -35,6 +34,6 @@ class Timer:
 @pytest.fixture()
 def temp_dir():
     temp = Path("temp")
-    os.makedirs(temp, exist_ok=True)
+    temp.mkdir(parents=True, exist_ok=True)
     yield temp
     shutil.rmtree(temp)

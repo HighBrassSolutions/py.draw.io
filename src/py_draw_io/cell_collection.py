@@ -18,7 +18,7 @@ class CellCollection:
 
     _data: list[Cell]
 
-    def __init__(self, data: list[Cell] | None = None):
+    def __init__(self, data: list[Cell] | None = None) -> None:
         """
         Create a new instance of the CellCollection class.
 

@@ -45,7 +45,7 @@ class CacheFile(BaseModel):
     @lru_cache
     def _get_file_hash(cls, source_file: Path) -> str:
         hasher = hashlib.sha256()
-        with open(source_file, "rb") as file_p:
+        with source_file.open("rb") as file_p:
             while chunk := file_p.read(8192):
                 hasher.update(chunk)
         return hasher.hexdigest()
@@ -106,7 +106,7 @@ class CacheFile(BaseModel):
         :return: The loaded cache file
         """
         try:
-            with _LOCK, open(path) as file_p:
+            with _LOCK, path.open() as file_p:
                 data = json.load(file_p)
             return CacheFile.model_validate(data)
         except FileNotFoundError as err:
@@ -123,7 +123,7 @@ class CacheFile(BaseModel):
         """
         with _LOCK:
             self.updated = datetime.datetime.now()
-            with open(path, "w") as file_p:
+            with path.open("w") as file_p:
                 json.dump(self.model_dump(mode="json"), file_p, indent=4)
 
     @classmethod

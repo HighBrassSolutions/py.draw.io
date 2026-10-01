@@ -23,7 +23,7 @@ class GeometryCell(Cell, BoundaryContainer):
     bottom_right: Point
 
     def __init__(self, cell_id: str, style: dict[str, int | str | None] | None, value: str | None,
-                 parent: Cell | Layer, top_left: Point, bottom_right: Point):
+                 parent: Cell | Layer, top_left: Point, bottom_right: Point) -> None:
         """
         Create a new instance for the ArrowCell class.
 

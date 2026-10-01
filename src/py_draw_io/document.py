@@ -1,7 +1,6 @@
 """Module for the Document class and its exceptions."""
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from bs4 import BeautifulSoup, Tag
@@ -25,7 +24,7 @@ class Document:
     host: str
     agent: str
 
-    def __init__(self, diagrams: list[Diagram], host: str, agent: str):
+    def __init__(self, diagrams: list[Diagram], host: str, agent: str) -> None:
         """
         Create a new instance for the Document class.
 
@@ -73,7 +72,7 @@ class Document:
         :param path: Path to load the document from
         :return: The document as an object
         """
-        with open(path) as file_p:
+        with path.open() as file_p:
             xml_data = BeautifulSoup(file_p.read(), "xml")
 
         try:
@@ -104,9 +103,9 @@ class Document:
         :param path: Path to save the document to
         :return: None
         """
-        os.makedirs(path.parent, exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
         encoded = self.to_xml()
         soup = BeautifulSoup("", "xml")
         soup.append(encoded)
-        with open(path, "w") as file_p:
+        with path.open("w") as file_p:
             file_p.write(soup.prettify())

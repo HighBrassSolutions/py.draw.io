@@ -21,7 +21,7 @@ class ArrowCell(Cell):
 
     def __init__(self, cell_id: str, style: dict[str, int | str | None] | None,
                  value: str | None, parent: Cell | Layer,
-                 source: Cell | Point, target: Cell | Point, waypoints: list[Point]):
+                 source: Cell | Point, target: Cell | Point, waypoints: list[Point]) -> None:
         """
         Create a new instance of the ArrowCell class.
 

@@ -7,18 +7,18 @@ from py_draw_io.cache import CacheFile, CacheValidationError
 
 def test_check_file(tmp_path):
     source1 = tmp_path / "source1.json"
-    with open(source1, "w") as file_p:
+    with source1.open("w") as file_p:
         file_p.write("yolo")
 
     source2 = tmp_path / "source2.json"
-    with open(source2, "w") as file_p:
+    with source2.open("w") as file_p:
         file_p.write("yolo2")
 
     target1 = tmp_path / "target1.png"
     target2 = tmp_path / "target2.png"
 
     cache_file = tmp_path / "cache.json"
-    with open(cache_file, "w") as file_p:
+    with cache_file.open("w") as file_p:
         json.dump({
             "created": "2026-04-17T08:06:20.412456",
             "updated": "2026-04-17T08:06:20.412526",
@@ -47,13 +47,13 @@ def test_check_file(tmp_path):
 
 def test_check_file_hash_does_not_match(tmp_path):
     source1 = tmp_path / "source1.json"
-    with open(source1, "w") as file_p:
+    with source1.open("w") as file_p:
         file_p.write("yolo")
 
     target1 = tmp_path / "target1.png"
 
     cache_file = tmp_path / "cache.json"
-    with open(cache_file, "w") as file_p:
+    with cache_file.open("w") as file_p:
         json.dump({
             "created": "2026-04-17T08:06:20.412456",
             "updated": "2026-04-17T08:06:20.412526",

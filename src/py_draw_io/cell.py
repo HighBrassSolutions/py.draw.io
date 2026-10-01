@@ -28,7 +28,7 @@ class Cell(Fittable, ABC):
     contains_geometry: bool
 
     def __init__(self, cell_id: str, style: dict[str, int | str | None] | None,
-                 value: str | None, parent: Cell | Layer):
+                 value: str | None, parent: Cell | Layer) -> None:
         """
         Create a new instance of the Cell class.
 
