@@ -1,6 +1,7 @@
 """Module for the DrawIoExporter class and its Exceptions."""
 import logging
 import os
+import subprocess
 from copy import copy
 from pathlib import Path
 
@@ -91,11 +92,20 @@ class DrawIoExporter:
         if out_path.is_file():
             os.remove(out_path)
         page_index = self._get_page_index(file, page)
-        export_com = (f"{self._draw_io} {file} --export -p {page_index} -s {self._quality} "
-                       f"-t -o {out_path} --theme light")
-        return_code = os.system(export_com)
+        export_args = [
+            str(self._draw_io),
+            str(file),
+            "--export",
+            "-p", str(page_index),
+            "-s", str(self._quality),
+            "-t",
+            "-o", str(out_path),
+            "--theme", "light",
+        ]
+        # export_args is built entirely from internal config/Path values, not external input.
+        result = subprocess.run(export_args, capture_output=True, text=True, check=False)  # noqa: S603
         if not os.path.isfile(out_path):
-            raise ExportFailedError(return_code)
+            raise ExportFailedError(result.returncode)
 
     def _create_default_path(self, page: str, limit_export: str | None) -> Path:
         """Create a default path for image exports based on the file name and exported area."""

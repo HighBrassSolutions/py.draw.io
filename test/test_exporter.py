@@ -1,6 +1,7 @@
 import datetime
 import os
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -8,7 +9,7 @@ import pytest
 from py_draw_io import SETTINGS
 from py_draw_io.cell_collection import CellNotFoundError, IllegalBoundaryError
 from py_draw_io.document import NoDrawioDocumentError
-from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, LayerConfigurationError
+from py_draw_io.exporter import DrawIoExporter, ExportFailedError, IllegalExtensionError, LayerConfigurationError
 from test.conftest import Timer
 
 FILE_FOR_TEST_PATH = Path(__file__).parent / "test_diagram.drawio"
@@ -121,6 +122,20 @@ def test_export_failure(export_temp):
 
     files = [x for x in export_temp.iterdir() if x.is_file()]
     assert len(files) == 1
+
+
+def test_export_subprocess_failure(tmp_path, monkeypatch):
+    out_path = tmp_path / "out.png"
+
+    def fake_run(args, **_kwargs):
+        return subprocess.CompletedProcess(args, returncode=1)
+
+    monkeypatch.setattr("py_draw_io.exporter.subprocess.run", fake_run)
+
+    with pytest.raises(ExportFailedError):
+        DrawIoExporter().export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+
+    assert not out_path.is_file()
 
 
 def test_success(tmp_path):
