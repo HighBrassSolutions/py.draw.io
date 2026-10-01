@@ -49,35 +49,44 @@ line-length = 120
 [tool.ruff.lint]
 # https://github.com/astral-sh/ruff/issues/6606
 select = [
-    "E", "F", "D",
-    "I",   # isort
-    "N",   # pep8-naming
-    "A",   # builtin shadowing
-    "B",   # bugbear
-    "C4",  # comprehensions
+    "E", # pycodestyle
+    "F", # pyflakes
+    "D", # pydocstyle
+    "I", # isort
+    "N", # pep8-naming
+    "A", # builtin shadowing
+    "B", # bugbear
+    "C4", # comprehensions
     "SIM", # simplify
     "COM", # trailing comma
     "ISC", # implicit str concat
-    "Q",   # quotes
+    "Q", # quotes
     "TID", # tidy imports
     "PIE", # misc lints
-    "W",   # pycodestyle warnings
-    "FA",  # future-annotations
+    "W", # pycodestyle warnings
+    "FA", # future-annotations
     "T20", # print statements
     "RET", # return statements
     "ARG", # unused arguments
-    "PERF",# performance
+    "PERF", # performance
     "RUF", # ruff-specific rules
-    "G",   # logging format
+    "G", # logging format
     "ERA", # commented-out code
-    "UP",  # pyupgrade
+    "UP", # pyupgrade
     "INP", # implicit namespace package
-    "S",   # flake8-bandit (security)
+    "S", # flake8-bandit (security)
     "PTH", # use pathlib instead of os.path
     "ANN", # type annotations
+    "TRY", # tryceratops (exception handling)
 ]
-#select = ["E", "F"]
-ignore = ["D212", "D105", "D203"]
+
+ignore = [
+    "D212",
+    "D105",
+    "D203",
+    "TRY003", # XmlDecodingError etc. are general-purpose with genuinely distinct per-site messages;
+    # moving them into __init__ would be a no-op, not a real fix.
+]
 
 [tool.ruff.lint.per-file-ignores]
 # Fixtures are injected by name; leaving one unused (e.g. to just get a temp dir) is normal in tests.

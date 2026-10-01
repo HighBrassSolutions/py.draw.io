@@ -109,10 +109,10 @@ class CacheFile(BaseModel):
             with _LOCK, path.open() as file_p:
                 data = json.load(file_p)
             return CacheFile.model_validate(data)
-        except FileNotFoundError as err:
+        except FileNotFoundError:
             if create_if_necessary:
                 return CacheFile.new()
-            raise err
+            raise
 
     def save(self, path: Path) -> None:
         """
