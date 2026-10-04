@@ -10,7 +10,7 @@ from py_draw_io.cache import CacheValidationError
 from py_draw_io.cell_collection import CellCollection, IllegalBoundaryError
 from py_draw_io.document import Document
 
-DEFAULT_DRAWIO_LOCATION = Path("/Applications/draw.io.app/Contents/MacOS/draw.io")
+DEFAULT_DRAWIO_LOCATION = Path("drawio")
 DEFAULT_QUALITY = 5
 DEFAULT_TEMP_DIR = Path("temp")
 
