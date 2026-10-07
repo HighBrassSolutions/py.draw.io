@@ -6,13 +6,15 @@ from test.helpers import DummyBoundaryContainer
 
 
 def test_to_string():
-    cell = DummyCell("test_cell", None, "", None)
+    layer = Layer(CellCollection(), "1")
+    cell = DummyCell("test_cell", None, "", layer)
     assert "test_cell" in str(cell)
     assert repr(cell) == str(cell)
 
 
 def test_fits_inside():
-    cell = DummyCell("test_cell", None, "", None)
+    layer = Layer(CellCollection(), "1")
+    cell = DummyCell("test_cell", None, "", layer)
     assert cell.fits_inside(DummyBoundaryContainer(Point(0, 0), Point(0, 0))) is True
 
 

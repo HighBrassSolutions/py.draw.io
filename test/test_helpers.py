@@ -7,10 +7,11 @@ from py_draw_io.helpers import get_optional_string_attribute, get_string_attribu
 
 
 def test_get_string_attribute_success():
-    tag = Tag(name="mxCell", attrs={
+    attrs: dict[str, str | AttributeValueList] = {
         "test_list": AttributeValueList(["val1", "val2"]),
         "test_str": "t_val",
-    })
+    }
+    tag = Tag(name="mxCell", attrs=attrs)
 
     assert get_string_attribute(tag, "test_str") == "t_val"
 
@@ -24,10 +25,11 @@ def test_get_string_attribute_success():
 
 
 def test_get_optional_string_attribute():
-    tag = Tag(name="mxCell", attrs={
+    attrs: dict[str, str | AttributeValueList] = {
         "test_list": AttributeValueList(["val1", "val2"]),
         "test_str": "t_val",
-    })
+    }
+    tag = Tag(name="mxCell", attrs=attrs)
 
     assert get_optional_string_attribute(tag, "test_str") == "t_val"
     assert get_optional_string_attribute(tag, "not_existent") is None

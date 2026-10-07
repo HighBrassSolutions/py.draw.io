@@ -1,6 +1,5 @@
-from bs4 import BeautifulSoup
-
 from py_draw_io.graph_model import GraphModel
+from test.helpers import create_tag
 
 
 def test_to_string():
@@ -20,10 +19,11 @@ def test_to_xml():
 
 
 def test_from_xml():
-    data = BeautifulSoup("""
-        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    data = create_tag("""
+        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                      page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
         </mxGraphModel>
-    """, "xml").find("mxGraphModel")
+    """, "mxGraphModel")
 
     model = GraphModel.from_xml(data)
     assert model.grid_size == 10

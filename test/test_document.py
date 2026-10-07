@@ -12,21 +12,25 @@ from py_draw_io.point import Point
 DUMMY_DATA = """
 <mxfile host="Electron" agent="Testerino" version="29.6.1" pages="3">
   <diagram name="system" id="rMK6Qri9A2ZtsiWg45jE">
-    <mxGraphModel dx="2218" dy="1640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2218" dy="1640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                  page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="69C91-wjoXnYqn4PnUJh" name="data">
-    <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                  page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="R75-8NS8Kljy3cZdzqBM" name="wireframes">
-    <mxGraphModel dx="1220" dy="902" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1220" dy="902" grid="1" gridSize="10" guides="1" tooltips="1"
+                  connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827"
+                  pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
       </root>
@@ -38,10 +42,11 @@ DUMMY_DATA = """
 
 def test_get_document():
     model = GraphModel(10, 400, 600)
-    geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    diagram = Diagram("test_diag", "test_diag_id_123", CellCollection([geo1, arr1]), model)
-    diagram2 = Diagram("empty_diag", "empty_diag_id_321", CellCollection(), model)
+    layer = Layer(CellCollection(), "1")
+    geo1 = GeometryCell("geo_cell", {}, "", layer, Point(0, 0), Point(5, 5))
+    _ = ArrowCell("arrow_cell", {}, "", layer, geo1, Point(100, 100), [])
+    diagram = Diagram("test_diag", "test_diag_id_123", [layer], model)
+    diagram2 = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "2")], model)
     doc = Document([diagram, diagram2], "local", "47")
 
     with pytest.raises(DiagramNotFoundError):
@@ -56,8 +61,8 @@ def test_get_document():
 
 def test_length():
     model = GraphModel(10, 400, 600)
-    diagram = Diagram("empty_diag", "empty_diag_id_321", CellCollection(), model)
-    diagram2 = Diagram("empty_diag", "empty_diag_id_321", CellCollection(), model)
+    diagram = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "1")], model)
+    diagram2 = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "2")], model)
     doc = Document([diagram, diagram2], "local", "47")
 
     assert len(doc) == 2
@@ -79,7 +84,7 @@ def test_load_empty_file(temp_dir):
     with temp_file.open("w") as file_p:
         file_p.write("")
 
-    with pytest.raises(NoDrawioDocumentError) as err:
+    with pytest.raises(NoDrawioDocumentError):
         _ = Document.load(temp_file)
 
 
@@ -91,12 +96,11 @@ def test_load_file_not_found(temp_dir):
 
 
 def test_to_xml(temp_dir):
-    temp_file = temp_dir / "test_file.drawio"
-
     model = GraphModel(10, 400, 600)
-    geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    diagram = Diagram("test_diag", "test_diag_id_123", [Layer(CellCollection([geo1, arr1]), "1")], model)
+    layer = Layer(CellCollection(), "1")
+    geo1 = GeometryCell("geo_cell", {}, "", layer, Point(0, 0), Point(5, 5))
+    _ = ArrowCell("arrow_cell", {}, "", layer, geo1, Point(100, 100), [])
+    diagram = Diagram("test_diag", "test_diag_id_123", [layer], model)
     diagram2 = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "2")], model)
     doc = Document([diagram, diagram2], "local", "47")
 
@@ -111,9 +115,10 @@ def test_save(temp_dir):
     temp_file = temp_dir / "test_file.drawio"
 
     model = GraphModel(10, 400, 600)
-    geo1 = GeometryCell("geo_cell", {}, "", None, Point(0, 0), Point(5, 5))
-    arr1 = ArrowCell("arrow_cell", {}, "", None, geo1, Point(100, 100), [])
-    diagram = Diagram("test_diag", "test_diag_id_123", [Layer(CellCollection([geo1, arr1]), "1")], model)
+    layer = Layer(CellCollection(), "1")
+    geo1 = GeometryCell("geo_cell", {}, "", layer, Point(0, 0), Point(5, 5))
+    _ = ArrowCell("arrow_cell", {}, "", layer, geo1, Point(100, 100), [])
+    diagram = Diagram("test_diag", "test_diag_id_123", [layer], model)
     diagram2 = Diagram("empty_diag", "empty_diag_id_321", [Layer(CellCollection(), "2")], model)
     doc = Document([diagram, diagram2], "local", "47")
 

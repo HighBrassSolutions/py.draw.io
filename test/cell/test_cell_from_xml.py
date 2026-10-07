@@ -16,6 +16,7 @@ def test_decode_style_success():
     """, "mxCell")
 
     cell = DummyCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
+    assert cell.style is not None
     assert cell.style["geometry_type"] is None
     assert cell.style["rounded"] == 1
     assert cell.style["whiteSpace"] == "wrap"
@@ -27,6 +28,7 @@ def test_decode_style_success():
     """, "mxCell")
 
     cell = DummyCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
+    assert cell.style is not None
     assert cell.style["geometry_type"] == "yolo"
     assert cell.style["rounded"] == 1
 
@@ -48,6 +50,7 @@ def test_decode_style_illegal_style_string():
     """, "mxCell")
 
     cell = DummyCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
+    assert cell.style is not None
     assert cell.style["test"] == ""
 
 

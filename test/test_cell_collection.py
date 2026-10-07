@@ -88,7 +88,7 @@ def test_remove_cells_outside_boundary():
     c1 = GeometryCell("c1", None, "", layer, Point(10, 10), Point(14, 14))
     c2 = GeometryCell("c2", None, "", layer, Point(0, 4), Point(7, 12))
     c3 = GeometryCell("c3", None, "", layer, Point(50, 40), Point(55, 55))
-    c4 = GeometryCell("c4", None, "", c3, Point(34, 23), Point(36, 43))
+    _ = GeometryCell("c4", None, "", c3, Point(34, 23), Point(36, 43))
 
     collection = CellCollection([c1, c2, c3])
 

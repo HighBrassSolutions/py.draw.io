@@ -41,6 +41,19 @@ test = [
 strict = true
 python_version = "3.10"
 
+# mkdocs-gen-files (docs group) has incomplete annotations and may not be installed where mypy runs.
+# Treat it as untyped so results don't depend on whether the docs dependencies are present.
+[[tool.mypy.overrides]]
+module = "mkdocs_gen_files.*"
+follow_imports = "skip"
+ignore_missing_imports = true
+
+# Test functions aren't annotated, but their bodies are still type-checked against the library's API.
+[[tool.mypy.overrides]]
+module = "test.*"
+disallow_untyped_defs = false
+check_untyped_defs = true
+
 [tool.ruff]
 line-length = 120
 target-version = "py310"
@@ -92,12 +105,17 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # Fixtures are injected by name; leaving one unused (e.g. to just get a temp dir) is normal in tests.
 # `assert` is the standard pytest idiom, not a security concern.
-# Test functions aren't type-annotated in this project (mypy doesn't check test/ either).
+# Test functions aren't type-annotated in this project (mypy only checks their bodies, see [tool.mypy.overrides]).
 "test/**/*.py" = [
     "ARG001",
     "S101",
-    "ANN"
+    "ANN",
+    "D",
 ]
+
+# scripts/ holds standalone build-time utilities invoked by file path (e.g. from mkdocs.yml),
+# not an importable package - adding an __init__.py here would misrepresent that.
+"scripts/**/*.py" = ["INP001"]
 
 [tool.ruff.lint.pydocstyle]
 #convention = "pep257"

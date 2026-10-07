@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import shutil
 from pathlib import Path
@@ -13,15 +15,15 @@ class Timer:
     start: datetime.datetime | None
     end: datetime.datetime | None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start = None
         self.end = None
 
-    def __enter__(self):
+    def __enter__(self) -> Timer:
         self.start = datetime.datetime.now()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *_: object) -> None:
         self.end = datetime.datetime.now()
 
     @property
