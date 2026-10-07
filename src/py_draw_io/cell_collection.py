@@ -22,7 +22,8 @@ class CellCollection:
         """
         Create a new instance of the CellCollection class.
 
-        :param data: Can be a list of cells to initialize the collection with some cells
+        Args:
+            data: Can be a list of cells to initialize the collection with some cells
         """
         if data is None:
             self._data = []
@@ -48,8 +49,8 @@ class CellCollection:
         """
         Append a cell to the cell collection.
 
-        :param cell: Cell to append
-        :return: None
+        Args:
+            cell: Cell to append
         """
         self._data.append(cell)
 
@@ -57,9 +58,14 @@ class CellCollection:
         """
         Search the collection for cells with the given cell id recursively.
 
-        :param cell_id: ID to find a matching cell for
-        :raises CellNotFoundError: If no cell was found for the given ID
-        :return: The cell if one was found
+        Args:
+            cell_id: ID to find a matching cell for
+
+        Returns:
+            The cell if one was found
+
+        Raises:
+            CellNotFoundError: If no cell was found for the given ID
         """
 
         def helper(data: list[Cell]) -> Cell | None:
@@ -86,10 +92,12 @@ class CellCollection:
         For cells with geometries, only the first parent gets checked, meaning if the parent does not fit the boundary,
         it gets removed together with all children.
 
-        :param boundary: Either a BoundaryContainer or a String matching the ID of one of the Cells
-        :raises CellNotFoundError: If a String was given but no matching cell was found
-        :raises IllegalBoundaryError: If the found cell does not contain a geometry
-        :return: None
+        Args:
+            boundary: Either a BoundaryContainer or a String matching the ID of one of the Cells
+
+        Raises:
+            CellNotFoundError: If a String was given but no matching cell was found
+            IllegalBoundaryError: If the found cell does not contain a geometry
         """
         boundary_container: BoundaryContainer
         if isinstance(boundary, str):

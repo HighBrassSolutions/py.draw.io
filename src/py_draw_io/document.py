@@ -28,9 +28,10 @@ class Document:
         """
         Create a new instance for the Document class.
 
-        :param diagrams: Diagrams (Pages) contained in this document
-        :param host: Host as defined in the document header
-        :param agent: Agent as defined in the document header
+        Args:
+            diagrams: Diagrams (Pages) contained in this document
+            host: Host as defined in the document header
+            agent: Agent as defined in the document header
         """
         self.diagrams = diagrams
         self.host = host
@@ -43,9 +44,14 @@ class Document:
         """
         Get a specific diagram from the file.
 
-        :param identifier: Name or ID of the diagram to get
-        :raises DiagramNotFoundError: If no diagram with the given name or id was found
-        :return: The diagram (if found)
+        Args:
+            identifier: Name or ID of the diagram to get
+
+        Returns:
+            The diagram (if found)
+
+        Raises:
+            DiagramNotFoundError: If no diagram with the given name or id was found
         """
         for diagram in self.diagrams:
             if diagram.id == identifier or diagram.name == identifier:
@@ -57,9 +63,14 @@ class Document:
         """
         Create a Document from the given xml data.
 
-        :param data: XML tag to create the GraphModel from
-        :return: The created Document
-        :raises XmlDecodingError: If parsing fails for any reason
+        Args:
+            data: XML tag to create the GraphModel from
+
+        Returns:
+            The created Document
+
+        Raises:
+            XmlDecodingError: If parsing fails for any reason
         """
         diagrams = [Diagram.from_xml(diagram_data) for diagram_data in data.find_all("diagram")]
         return cls(diagrams, get_string_attribute(data, "host"), get_string_attribute(data, "agent"))
@@ -69,8 +80,11 @@ class Document:
         """
         Load the draw.io document from the specified path.
 
-        :param path: Path to load the document from
-        :return: The document as an object
+        Args:
+            path: Path to load the document from
+
+        Returns:
+            The document as an object
         """
         with path.open() as file_p:
             xml_data = BeautifulSoup(file_p.read(), "xml")
@@ -86,7 +100,8 @@ class Document:
         """
         Create an XML structure representing this class.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
         out = Tag(name="mxfile")
         out.attrs["host"] = self.host
@@ -100,8 +115,8 @@ class Document:
         """
         Save the document to the specified path.
 
-        :param path: Path to save the document to
-        :return: None
+        Args:
+            path: Path to save the document to
         """
         path.parent.mkdir(parents=True, exist_ok=True)
         encoded = self.to_xml()

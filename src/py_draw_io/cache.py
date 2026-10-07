@@ -28,8 +28,11 @@ class FileCache(BaseModel):
         """
         Create a new FileCache object.
 
-        :param file_hash: Hash of the source file
-        :return:
+        Args:
+            file_hash: Hash of the source file
+
+        Returns:
+            The newly created FileCache object without any registered files
         """
         return FileCache(hash=file_hash, files=[])
 
@@ -54,9 +57,9 @@ class CacheFile(BaseModel):
         """
         Register file in the cache.
 
-        :param source_diagram_file: Diagram the image is to be exported from
-        :param target_image_file: Image to be exported from the diagram
-        :return: None
+        Args:
+            source_diagram_file: Diagram the image is to be exported from
+            target_image_file: Image to be exported from the diagram
         """
         source_file_hash = self._get_file_hash(source_diagram_file)
         try:
@@ -77,11 +80,13 @@ class CacheFile(BaseModel):
         """
         Check if the file is part of the cache.
 
-        :param source_diagram_file: Diagram the image is to be exported from
-        :param target_image_file: Image to be exported from the diagram
-        :raises CacheValidationError: If the hash of source diagram does not match the one in cache
-                                      or the target file is not part of the cache
-        :return: None
+        Args:
+            source_diagram_file: Diagram the image is to be exported from
+            target_image_file: Image to be exported from the diagram
+
+        Raises:
+            CacheValidationError: If the hash of source diagram does not match the one in cache
+                or the target file is not part of the cache
         """
         source_file_hash = self._get_file_hash(source_diagram_file)
         try:
@@ -101,9 +106,12 @@ class CacheFile(BaseModel):
         """
         Load a cache file from disk.
 
-        :param path: Path to the file to load
-        :param create_if_necessary: Return an empty cache file object if no cache file exists
-        :return: The loaded cache file
+        Args:
+            path: Path to the file to load
+            create_if_necessary: Return an empty cache file object if no cache file exists
+
+        Returns:
+            The loaded cache file
         """
         try:
             with _LOCK, path.open() as file_p:
@@ -118,8 +126,8 @@ class CacheFile(BaseModel):
         """
         Save the cache file to disk.
 
-        :param path: Path where the file gets saved
-        :return: None
+        Args:
+            path: Path where the file gets saved
         """
         with _LOCK:
             self.updated = datetime.datetime.now()
@@ -131,6 +139,7 @@ class CacheFile(BaseModel):
         """
         Create a new cache file.
 
-        :return: The newly created CacheFile object
+        Returns:
+            The newly created CacheFile object
         """
         return CacheFile(created=datetime.datetime.now(), updated=datetime.datetime.now(), files={})

@@ -12,6 +12,9 @@ class Fittable(ABC):
         """
         Determine if this object is fully contained within the other one.
 
-        :param other: Container defining the boundary this object needs to be fully enclosed by
-        :return:
+        Args:
+            other: Container defining the boundary this object needs to be fully enclosed by
+
+        Returns:
+            True if this object lies completely within the boundary of other, False otherwise
         """

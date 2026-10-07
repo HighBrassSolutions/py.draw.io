@@ -27,12 +27,13 @@ class GeometryCell(Cell, BoundaryContainer):
         """
         Create a new instance for the ArrowCell class.
 
-        :param cell_id: ID of the cell
-        :param style: Styling information for the cell
-        :param value: Content of the cells text field
-        :param parent: Parent cell (if there is one)
-        :param top_left: Top left point of the geometry
-        :param bottom_right: Botton right point of the geometry
+        Args:
+            cell_id: ID of the cell
+            style: Styling information for the cell
+            value: Content of the cells text field
+            parent: Parent cell (if there is one)
+            top_left: Top left point of the geometry
+            bottom_right: Botton right point of the geometry
         """
         super().__init__(cell_id, style, value, parent)
         self.top_left = top_left
@@ -65,8 +66,11 @@ class GeometryCell(Cell, BoundaryContainer):
         """
         Determine if this object is fully contained within the other one.
 
-        :param other: Container defining the boundary this object needs to be fully enclosed by
-        :return:
+        Args:
+            other: Container defining the boundary this object needs to be fully enclosed by
+
+        Returns:
+            True if this object lies completely within the boundary of other, False otherwise
         """
         return self.top_left.fits_inside(other) and self.bottom_right.fits_inside(other)
 
@@ -74,7 +78,8 @@ class GeometryCell(Cell, BoundaryContainer):
         """
         Create an XML structure representing this class.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
         base = super().to_xml()
         base.attrs["vertex"] = "1"
@@ -99,11 +104,16 @@ class GeometryCell(Cell, BoundaryContainer):
         """
         Create a GeometryCell from the given xml data.
 
-        :param data: XML tag to create the GeometryCell from
-        :param existing_cells: Cells already parsed from the XML document
-        :param layers: Layers parsed from the XML document
-        :return: The created GeometryCell
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the GeometryCell from
+            existing_cells: Cells already parsed from the XML document
+            layers: Layers parsed from the XML document
+
+        Returns:
+            The created GeometryCell
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells, layers)

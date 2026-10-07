@@ -108,11 +108,12 @@ ignore = [
 "test/**/*.py" = [
     "ARG001",
     "S101",
-    "ANN"
+    "ANN",
+    "D"
 ]
 # scripts/ holds standalone build-time utilities invoked by file path (e.g. from mkdocs.yml),
 # not an importable package - adding an __init__.py here would misrepresent that.
 "scripts/**/*.py" = ["INP001"]
 
 [tool.ruff.lint.pydocstyle]
-#convention = "pep257"
+convention = "google"

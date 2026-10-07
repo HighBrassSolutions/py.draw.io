@@ -26,10 +26,11 @@ class Diagram:
         """
         Create a new instance of the Diagram class.
 
-        :param name: Name of the diagram
-        :param diagram_id: ID of the diagram
-        :param layers: Layers with Cells containing the diagrams geometries
-        :param graph_model: Graph model for the diagram
+        Args:
+            name: Name of the diagram
+            diagram_id: ID of the diagram
+            layers: Layers with Cells containing the diagrams geometries
+            graph_model: Graph model for the diagram
         """
         self.name = name
         self.id = diagram_id
@@ -43,9 +44,14 @@ class Diagram:
         """
         Search the diagram for a cell with the given id recursively.
 
-        :param cell_id: ID to find a matching cell for
-        :raises CellNotFoundError: If no cell was found for the given ID
-        :return: The cell if one was found
+        Args:
+            cell_id: ID to find a matching cell for
+
+        Returns:
+            The cell if one was found
+
+        Raises:
+            CellNotFoundError: If no cell was found for the given ID
         """
         for layer in self.layers:
             try:
@@ -90,7 +96,8 @@ class Diagram:
         """
         Create an XML structure representing this class.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
 
         def build_cells(cells: list[Cell]) -> list[Tag]:
@@ -124,9 +131,14 @@ class Diagram:
         """
         Create a Diagram from the given XML data.
 
-        :param data: XML tag to create the Diagram from
-        :return: The created Diagram
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the Diagram from
+
+        Returns:
+            The created Diagram
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         model_data = data.find_all("mxGraphModel")
         if len(model_data) != 1:

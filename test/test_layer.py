@@ -11,7 +11,7 @@ def test_to_string():
     assert "12name" in str(layer)
     assert "0 cells" in str(layer)
     assert repr(layer) == str(layer)
-    cell = DummyCell("yolo", {}, None, layer)
+    _ = DummyCell("yolo", {}, None, layer)
     assert "1 cells" in str(layer)
 
 

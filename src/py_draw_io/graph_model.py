@@ -21,9 +21,10 @@ class GraphModel:
         """
         Create a new Instance of the GraphModel class.
 
-        :param grid_size: The grid size of the diagram
-        :param page_width: The width of the diagram page
-        :param page_height: The width of the diagram page
+        Args:
+            grid_size: The grid size of the diagram
+            page_width: The width of the diagram page
+            page_height: The width of the diagram page
         """
         self.grid_size = grid_size
         self.page_width = page_width
@@ -36,7 +37,8 @@ class GraphModel:
         """
         Convert the GraphModel to a XML tag.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
         out = Tag(name="mxGraphModel")
         out.attrs["gridSize"] = str(self.grid_size)
@@ -51,9 +53,14 @@ class GraphModel:
         """
         Create a GraphModel from the given xml data.
 
-        :param data: XML tag to create the GraphModel from
-        :return: The created GraphModel
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the GraphModel from
+
+        Returns:
+            The created GraphModel
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         return cls(int(get_string_attribute(data, "gridSize")),
                    int(get_string_attribute(data, "pageWidth")),
