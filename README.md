@@ -25,7 +25,49 @@ py.draw.io requires Python 3.10 or newer. It is not published on PyPI yet, so in
 pip install git+https://github.com/ShotLab/py.draw.io.git
 ```
 
+### Installing draw.io
+
 Exporting images additionally requires the [draw.io desktop app](https://github.com/jgraph/drawio-desktop/releases).
+Reading, editing and saving diagrams works without it.
+
+| Platform | Command                                                      |
+|----------|--------------------------------------------------------------|
+| macOS    | `brew install --cask drawio`                                 |
+| Windows  | `winget install --id JGraph.Draw --exact`                    |
+| Windows  | `choco install drawio`                                       |
+| Linux    | `sudo snap install drawio`                                   |
+| Linux    | `flatpak install flathub com.jgraph.drawio.desktop`          |
+
+Installers (`.dmg`, `.exe`, `.deb`, `.rpm`, AppImage) are also available on the
+[releases page](https://github.com/jgraph/drawio-desktop/releases).
+
+By default, the exporter expects draw.io to be in PATH (`drawio`). On other systems, pass the path to the executable:
+
+```python
+from pathlib import Path
+
+from py_draw_io.exporter import DrawIoExporter
+
+exporter = DrawIoExporter(draw_io=Path("/snap/bin/drawio"))
+```
+
+Typical locations:
+
+| Installed via         | Executable                                                     |
+|-----------------------|----------------------------------------------------------------|
+| Windows installer     | `C:\Program Files\draw.io\draw.io.exe`                         |
+| `.deb` / `.rpm`       | `/usr/bin/drawio`                                              |
+| Snap                  | `/snap/bin/drawio`                                             |
+| Flatpak (system-wide) | `/var/lib/flatpak/exports/bin/com.jgraph.drawio.desktop`       |
+
+draw.io is an Electron app and needs a display, even when exporting from the command line. On headless Linux
+machines (e.g. CI runners), install `xvfb` and point `draw_io` to a small wrapper script that runs draw.io in a
+virtual display:
+
+```shell
+#!/bin/sh
+exec xvfb-run --auto-servernum /usr/bin/drawio "$@"
+```
 
 ## Example
 
