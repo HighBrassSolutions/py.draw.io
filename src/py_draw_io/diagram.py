@@ -1,12 +1,13 @@
 """Module for the Diagram class."""
 from __future__ import annotations
-from typing import List
+
 from bs4 import Tag
 
-from py_draw_io.cell import Cell
-from .cell_collection import CellCollection, CellNotFoundError
 from py_draw_io.arrow_cell import ArrowCell
+from py_draw_io.cell import Cell
 from py_draw_io.geometry_cell import GeometryCell
+
+from .cell_collection import CellCollection, CellNotFoundError
 from .errors import XmlDecodingError
 from .graph_model import GraphModel
 from .helpers import get_string_attribute
@@ -18,17 +19,18 @@ class Diagram:
 
     name: str
     id: str
-    layers: List[Layer]
+    layers: list[Layer]
     graph_model: GraphModel
 
-    def __init__(self, name: str, diagram_id: str, layers: List[Layer], graph_model: GraphModel) -> None:
+    def __init__(self, name: str, diagram_id: str, layers: list[Layer], graph_model: GraphModel) -> None:
         """
         Create a new instance of the Diagram class.
 
-        :param name: Name of the diagram
-        :param diagram_id: ID of the diagram
-        :param layers: Layers with Cells containing the diagrams geometries
-        :param graph_model: Graph model for the diagram
+        Args:
+            name: Name of the diagram
+            diagram_id: ID of the diagram
+            layers: Layers with Cells containing the diagrams geometries
+            graph_model: Graph model for the diagram
         """
         self.name = name
         self.id = diagram_id
@@ -42,9 +44,14 @@ class Diagram:
         """
         Search the diagram for a cell with the given id recursively.
 
-        :param cell_id: ID to find a matching cell for
-        :raises CellNotFoundError: If no cell was found for the given ID
-        :return: The cell if one was found
+        Args:
+            cell_id: ID to find a matching cell for
+
+        Returns:
+            The cell if one was found
+
+        Raises:
+            CellNotFoundError: If no cell was found for the given ID
         """
         for layer in self.layers:
             try:
@@ -54,7 +61,7 @@ class Diagram:
         raise CellNotFoundError(cell_id)
 
     @classmethod
-    def _build_cell(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> Cell:
+    def _build_cell(cls, data: Tag, existing_cells: CellCollection, layers: list[Layer]) -> Cell:
         """Create a fitting cell object from the given XML tag."""
         try:
             return ArrowCell.from_xml(data, existing_cells, layers)
@@ -67,7 +74,7 @@ class Diagram:
         raise XmlDecodingError(f"Could not parse {data.attrs.get('id', None)}")
 
     @classmethod
-    def _build_cells(cls, xml_cells: List[Tag], existing_cells: CellCollection, layers: List[Layer]) -> None:
+    def _build_cells(cls, xml_cells: list[Tag], existing_cells: CellCollection, layers: list[Layer]) -> None:
         """
         Create a list of cells from the given XML tags.
 
@@ -89,10 +96,11 @@ class Diagram:
         """
         Create an XML structure representing this class.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
 
-        def build_cells(cells: List[Cell]) -> List[Tag]:
+        def build_cells(cells: list[Cell]) -> list[Tag]:
             out_tags = []
             for cell_data in cells:
                 out_tags.append(cell_data.to_xml())
@@ -123,16 +131,21 @@ class Diagram:
         """
         Create a Diagram from the given XML data.
 
-        :param data: XML tag to create the Diagram from
-        :return: The created Diagram
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the Diagram from
+
+        Returns:
+            The created Diagram
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         model_data = data.find_all("mxGraphModel")
         if len(model_data) != 1:
             raise XmlDecodingError("found more or less than one model data")
         model = GraphModel.from_xml(model_data[0])
         cells = CellCollection()
-        xml_cells: List[Tag] = data.find_all("mxCell")
+        xml_cells: list[Tag] = data.find_all("mxCell")
 
         base_cells = [x for x in xml_cells if "parent" not in x.attrs]
         if len(base_cells) != 1:

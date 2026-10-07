@@ -7,7 +7,6 @@ import json
 import threading
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Dict
 
 from pydantic import BaseModel
 
@@ -22,15 +21,18 @@ class FileCache(BaseModel):
     """Cache for a single diagram file object."""
 
     hash: str
-    files: List[str]
+    files: list[str]
 
     @classmethod
     def new(cls, file_hash: str) -> FileCache:
         """
         Create a new FileCache object.
 
-        :param file_hash: Hash of the source file
-        :return:
+        Args:
+            file_hash: Hash of the source file
+
+        Returns:
+            The newly created FileCache object without any registered files
         """
         return FileCache(hash=file_hash, files=[])
 
@@ -40,13 +42,13 @@ class CacheFile(BaseModel):
 
     created: datetime.datetime
     updated: datetime.datetime
-    files: Dict[str, FileCache]
+    files: dict[str, FileCache]
 
     @classmethod
     @lru_cache
     def _get_file_hash(cls, source_file: Path) -> str:
         hasher = hashlib.sha256()
-        with open(source_file, "rb") as file_p:
+        with source_file.open("rb") as file_p:
             while chunk := file_p.read(8192):
                 hasher.update(chunk)
         return hasher.hexdigest()
@@ -55,9 +57,9 @@ class CacheFile(BaseModel):
         """
         Register file in the cache.
 
-        :param source_diagram_file: Diagram the image is to be exported from
-        :param target_image_file: Image to be exported from the diagram
-        :return: None
+        Args:
+            source_diagram_file: Diagram the image is to be exported from
+            target_image_file: Image to be exported from the diagram
         """
         source_file_hash = self._get_file_hash(source_diagram_file)
         try:
@@ -78,17 +80,19 @@ class CacheFile(BaseModel):
         """
         Check if the file is part of the cache.
 
-        :param source_diagram_file: Diagram the image is to be exported from
-        :param target_image_file: Image to be exported from the diagram
-        :raises CacheValidationError: If the hash of source diagram does not match the one in cache
-                                      or the target file is not part of the cache
-        :return: None
+        Args:
+            source_diagram_file: Diagram the image is to be exported from
+            target_image_file: Image to be exported from the diagram
+
+        Raises:
+            CacheValidationError: If the hash of source diagram does not match the one in cache
+                or the target file is not part of the cache
         """
         source_file_hash = self._get_file_hash(source_diagram_file)
         try:
             file_cache = self.files[source_diagram_file.as_posix()]
-        except KeyError:
-            raise CacheValidationError("Source File was not found in cache")
+        except KeyError as err:
+            raise CacheValidationError("Source File was not found in cache") from err
 
         if file_cache.hash != source_file_hash:
             raise CacheValidationError("Source File hash does not match cached one")
@@ -102,30 +106,32 @@ class CacheFile(BaseModel):
         """
         Load a cache file from disk.
 
-        :param path: Path to the file to load
-        :param create_if_necessary: Return an empty cache file object if no cache file exists
-        :return: The loaded cache file
+        Args:
+            path: Path to the file to load
+            create_if_necessary: Return an empty cache file object if no cache file exists
+
+        Returns:
+            The loaded cache file
         """
         try:
-            with _LOCK:
-                with open(path, "r") as file_p:
-                    data = json.load(file_p)
+            with _LOCK, path.open() as file_p:
+                data = json.load(file_p)
             return CacheFile.model_validate(data)
-        except FileNotFoundError as err:
+        except FileNotFoundError:
             if create_if_necessary:
                 return CacheFile.new()
-            raise err
+            raise
 
     def save(self, path: Path) -> None:
         """
         Save the cache file to disk.
 
-        :param path: Path where the file gets saved
-        :return: None
+        Args:
+            path: Path where the file gets saved
         """
         with _LOCK:
             self.updated = datetime.datetime.now()
-            with open(path, "w") as file_p:
+            with path.open("w") as file_p:
                 json.dump(self.model_dump(mode="json"), file_p, indent=4)
 
     @classmethod
@@ -133,6 +139,7 @@ class CacheFile(BaseModel):
         """
         Create a new cache file.
 
-        :return: The newly created CacheFile object
+        Returns:
+            The newly created CacheFile object
         """
         return CacheFile(created=datetime.datetime.now(), updated=datetime.datetime.now(), files={})

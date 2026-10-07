@@ -1,9 +1,9 @@
 import pytest
 
-from py_draw_io.cell_collection import CellCollection
 from py_draw_io.arrow_cell import ArrowCell
-from py_draw_io.geometry_cell import GeometryCell
+from py_draw_io.cell_collection import CellCollection
 from py_draw_io.errors import XmlDecodingError
+from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.layer import Layer
 from py_draw_io.point import Point
 from test.helpers import create_tag

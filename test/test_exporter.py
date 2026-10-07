@@ -1,13 +1,14 @@
 import datetime
-import os
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
 
 from py_draw_io import SETTINGS
 from py_draw_io.cell_collection import CellNotFoundError, IllegalBoundaryError
-from py_draw_io.exporter import DrawIoExporter, IllegalExtensionError, ExportFailedError, LayerConfigurationError
+from py_draw_io.document import NoDrawioDocumentError
+from py_draw_io.exporter import DrawIoExporter, ExportFailedError, IllegalExtensionError, LayerConfigurationError
 from test.conftest import Timer
 
 FILE_FOR_TEST_PATH = Path(__file__).parent / "test_diagram.drawio"
@@ -16,7 +17,7 @@ FILE_FOR_TEST_PATH = Path(__file__).parent / "test_diagram.drawio"
 @pytest.fixture
 def export_temp():
     temp_dir = Path("temp")
-    os.makedirs(temp_dir, exist_ok=True)
+    temp_dir.mkdir(parents=True, exist_ok=True)
     yield temp_dir
     shutil.rmtree(temp_dir, ignore_errors=True)
 
@@ -35,7 +36,7 @@ def test_illegal_extension(tmp_path):
     assert not out_path.is_file()
 
     input_file = tmp_path / "diag.html"
-    with open(input_file, "w") as file_p:
+    with input_file.open("w") as file_p:
         file_p.write("nothing")
 
     with pytest.raises(IllegalExtensionError):
@@ -72,7 +73,7 @@ def test_default_file_name_with_limit(export_temp):
 def test_file_already_present(tmp_path):
     out_path = tmp_path / "out.png"
 
-    with open(out_path, "w") as file_p:
+    with out_path.open("w") as file_p:
         file_p.write("")
     assert out_path.stat().st_size < 5
 
@@ -109,17 +110,31 @@ def test_export_failure(export_temp):
     </mxfile>
     """
     dummy_file = export_temp / "dummy.drawio"
-    with open(dummy_file, "w") as file_p:
+    with dummy_file.open("w") as file_p:
         file_p.write(test_data)
 
     files = [x for x in export_temp.iterdir() if x.is_file()]
     assert len(files) == 1
 
-    with pytest.raises(ExportFailedError):
+    with pytest.raises(NoDrawioDocumentError):
         DrawIoExporter().export(dummy_file, "pagerino", None, None)
 
     files = [x for x in export_temp.iterdir() if x.is_file()]
     assert len(files) == 1
+
+
+def test_export_subprocess_failure(tmp_path, monkeypatch):
+    out_path = tmp_path / "out.png"
+
+    def fake_run(args, **_kwargs):
+        return subprocess.CompletedProcess(args, returncode=1)
+
+    monkeypatch.setattr("py_draw_io.exporter.subprocess.run", fake_run)
+
+    with pytest.raises(ExportFailedError):
+        DrawIoExporter().export(FILE_FOR_TEST_PATH, "pagerino", out_path, None)
+
+    assert not out_path.is_file()
 
 
 def test_success(tmp_path):
@@ -131,7 +146,6 @@ def test_success(tmp_path):
 
     DrawIoExporter().export(FILE_FOR_TEST_PATH, "pagerino", out_path, "eERzdUeXhqdjQ1jmuvG7-2")
 
-    print(out_path.stat().st_size)
     assert out_path.stat().st_size < 3000
 
 
@@ -163,7 +177,6 @@ def test_export_illegal_boundary(tmp_path):
 
 
 def test_use_of_cache(tmp_path):
-    print(tmp_path.as_posix())
     out_path = tmp_path / "out.png"
     assert not out_path.exists()
 
@@ -195,7 +208,7 @@ def test_use_of_cache(tmp_path):
     assert timer.duration > datetime.timedelta(seconds=1)
 
     # Delete exported file
-    os.remove(out_path)
+    out_path.unlink()
     assert not out_path.exists()
 
     # Without file present, it gets exported even though the cache matches

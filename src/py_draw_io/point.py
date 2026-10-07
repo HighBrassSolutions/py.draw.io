@@ -1,5 +1,6 @@
 """Module for the Point class."""
 from __future__ import annotations
+
 from .boundary_container import BoundaryContainer
 from .fittable import Fittable
 
@@ -10,12 +11,13 @@ class Point(Fittable):
     x: float
     y: float
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float, y: float) -> None:
         """
         Create a new instance of the Point class.
 
-        :param x: X-Coordinate in the diagram.
-        :param y: Y-Coordinate in the diagram.
+        Args:
+            x: X-Coordinate in the diagram.
+            y: Y-Coordinate in the diagram.
         """
         self.x = x
         self.y = y
@@ -37,8 +39,11 @@ class Point(Fittable):
         """
         Determine if this object is fully contained within the other one.
 
-        :param other: Container defining the boundary this object needs to be fully enclosed by
-        :return:
+        Args:
+            other: Container defining the boundary this object needs to be fully enclosed by
+
+        Returns:
+            True if this object lies completely within the boundary of other, False otherwise
         """
         return (other.top_left.x <= self.x <= other.bottom_right.x
                 and other.top_left.y <= self.y <= other.bottom_right.y)

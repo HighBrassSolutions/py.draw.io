@@ -164,7 +164,6 @@ def test_to_xml():
     geometries = xml_data.find_all("mxGeometry")
     assert len(geometries) == 2
 
-    # diags = xml_data.find_all("diagram")
     assert xml_data.name == "diagram"
     assert xml_data.attrs["id"] == "diag_id"
     assert xml_data.attrs["name"] == "test_diag"

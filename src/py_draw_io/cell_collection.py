@@ -1,5 +1,5 @@
 """Module for the CellCollection class."""
-from typing import List, Optional, Union, Iterator
+from collections.abc import Iterator
 
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.cell import Cell
@@ -16,13 +16,14 @@ class IllegalBoundaryError(Exception):
 class CellCollection:
     """Manages a list of cells and provides functions to manage it and all children of its elements recursively."""
 
-    _data: List[Cell]
+    _data: list[Cell]
 
-    def __init__(self, data: Optional[List[Cell]] = None):
+    def __init__(self, data: list[Cell] | None = None) -> None:
         """
         Create a new instance of the CellCollection class.
 
-        :param data: Can be a list of cells to initialize the collection with some cells
+        Args:
+            data: Can be a list of cells to initialize the collection with some cells
         """
         if data is None:
             self._data = []
@@ -48,8 +49,8 @@ class CellCollection:
         """
         Append a cell to the cell collection.
 
-        :param cell: Cell to append
-        :return: None
+        Args:
+            cell: Cell to append
         """
         self._data.append(cell)
 
@@ -57,12 +58,17 @@ class CellCollection:
         """
         Search the collection for cells with the given cell id recursively.
 
-        :param cell_id: ID to find a matching cell for
-        :raises CellNotFoundError: If no cell was found for the given ID
-        :return: The cell if one was found
+        Args:
+            cell_id: ID to find a matching cell for
+
+        Returns:
+            The cell if one was found
+
+        Raises:
+            CellNotFoundError: If no cell was found for the given ID
         """
 
-        def helper(data: List[Cell]) -> Optional[Cell]:
+        def helper(data: list[Cell]) -> Cell | None:
             """Check the data for the wanted cell, try recursively with the children."""
             for cell in data:
                 if cell.id == cell_id:
@@ -78,7 +84,7 @@ class CellCollection:
             raise CellNotFoundError(cell_id)
         return found_cell
 
-    def remove_cells_outside_boundary(self, boundary: Union[BoundaryContainer, str]) -> None:
+    def remove_cells_outside_boundary(self, boundary: BoundaryContainer | str) -> None:
         """
         Remove all cells outside the boundary from the cell collection.
 
@@ -86,10 +92,12 @@ class CellCollection:
         For cells with geometries, only the first parent gets checked, meaning if the parent does not fit the boundary,
         it gets removed together with all children.
 
-        :param boundary: Either a BoundaryContainer or a String matching the ID of one of the Cells
-        :raises CellNotFoundError: If a String was given but no matching cell was found
-        :raises IllegalBoundaryError: If the found cell does not contain a geometry
-        :return: None
+        Args:
+            boundary: Either a BoundaryContainer or a String matching the ID of one of the Cells
+
+        Raises:
+            CellNotFoundError: If a String was given but no matching cell was found
+            IllegalBoundaryError: If the found cell does not contain a geometry
         """
         boundary_container: BoundaryContainer
         if isinstance(boundary, str):
@@ -100,7 +108,7 @@ class CellCollection:
         else:
             boundary_container = boundary
 
-        def clean(cells: List[Cell]) -> List[Cell]:
+        def clean(cells: list[Cell]) -> list[Cell]:
             out = [x for x in cells if not x.contains_geometry or x.fits_inside(boundary_container)]
             for cell in out:
                 cell.children = clean(cell.children)
