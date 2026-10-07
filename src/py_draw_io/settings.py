@@ -17,9 +17,10 @@ class Settings:
         """
         Create a new instance of the Settings class.
 
-        :param cache_results: Whether Exporters should cache results of exports
-                              and skip future exports if cached results are present.
-        :param cache_file_location: The location of the cache file.
+        Args:
+            cache_results: Whether Exporters should cache results of exports
+                and skip future exports if cached results are present.
+            cache_file_location: The location of the cache file.
         """
         self.use_cache = cache_results
         self.cache_file_location = cache_file_location
@@ -29,8 +30,8 @@ class Settings:
         """
         Switch the location of the global cache file.
 
-        :param path: Path to the new cache file
-        :return: None
+        Args:
+            path: Path to the new cache file
         """
         self.cache_file_location = path
         self.cache_file = CacheFile.load(self.cache_file_location, create_if_necessary=True)

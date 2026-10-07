@@ -18,9 +18,10 @@ class Layer:
         """
         Create a new instance of the Layer class.
 
-        :param cells: Cells the layer contains
-        :param layer_id: ID of the layer
-        :param name: Name of the layer
+        Args:
+            cells: Cells the layer contains
+            layer_id: ID of the layer
+            name: Name of the layer
         """
         self.cells = cells
         self.id = layer_id
@@ -36,8 +37,11 @@ class Layer:
         """
         Create an XML structure representing this class.
 
-        :param parent_id: The parent cell id
-        :return: The created XML tag
+        Args:
+            parent_id: The parent cell id
+
+        Returns:
+            The created XML tag
         """
         out = Tag(name="mxCell")
         out.attrs["id"] = self.id
@@ -51,9 +55,14 @@ class Layer:
         """
         Create a Layer from the given XML data.
 
-        :param data: XML tag to create the Layer from
-        :return: The created Cell
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the Layer from
+
+        Returns:
+            The created Cell
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         layer_id = get_string_attribute(data, "id")
         name = get_optional_string_attribute(data, "value")

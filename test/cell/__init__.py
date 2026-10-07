@@ -17,11 +17,16 @@ class DummyCell(Cell):
         """
         Create a Cell from the given xml data.
 
-        :param data: XML tag to create the Cell from
-        :param existing_cells: Cells already parsed from the XML document
-        :param layers: Layers parsed from the XML document
-        :return: The created Cell
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the Cell from
+            existing_cells: Cells already parsed from the XML document
+            layers: Layers parsed from the XML document
+
+        Returns:
+            The created Cell
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells, layers)

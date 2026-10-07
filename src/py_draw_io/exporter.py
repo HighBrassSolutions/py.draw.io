@@ -49,14 +49,15 @@ class DrawIoExporter:
         """
         Create a new instance for the DrawIoExporter class.
 
-        :param draw_io: Path to the draw.io executable
-        :param quality: Quality index for the draw.io export. Can remain the default if no problems arise
-        :param temp_dir: Directory where temporary diagrams are stored that need to be created
-        :param marker_layers: IDs or names of marker layers
-        :param use_cache: If True, existing files will not be overwritten.
-                          If False, export will happen no matter what.
-                          If None, Module settings will be used.
-        if only a part of a diagram is to be exported
+        Args:
+            draw_io: Path to the draw.io executable
+            quality: Quality index for the draw.io export. Can remain the default if no problems arise
+            temp_dir: Directory where temporary diagrams are stored that need to be created
+                if only a part of a diagram is to be exported
+            marker_layers: IDs or names of marker layers
+            use_cache: If True, existing files will not be overwritten.
+                If False, export will happen no matter what.
+                If None, Module settings will be used.
         """
         self._draw_io = draw_io
         self._quality = quality
@@ -185,12 +186,12 @@ class DrawIoExporter:
         """
         Export the given diagram (or a part of it) into an image.
 
-        :param source: Location of the diagram to export
-        :param page: Name of the sheet to export
-        :param out_path: Full path to the output location
-        :param limit_export: If set to an ID of any object on the page, only arrows/geometries
-         enclosed by it will be exported
-        :return: None
+        Args:
+            source: Location of the diagram to export
+            page: Name of the sheet to export
+            out_path: Full path to the output location
+            limit_export: If set to an ID of any object on the page, only arrows/geometries
+                enclosed by it will be exported
         """
         if not source.is_file():
             raise FileNotFoundError(f"{source} is not a file")

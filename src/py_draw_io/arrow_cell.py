@@ -25,13 +25,14 @@ class ArrowCell(Cell):
         """
         Create a new instance of the ArrowCell class.
 
-        :param cell_id: ID of the cell
-        :param style: Styling information for the cell
-        :param value: Content of the cells text field
-        :param parent: Parent cell (if there is one)
-        :param source: Source of the arrow. Can either be another Cell or a Point
-        :param target: Target of the arrow. Can either be another Cell or a Point
-        :param waypoints: Additional points the arrow goes through between source and target
+        Args:
+            cell_id: ID of the cell
+            style: Styling information for the cell
+            value: Content of the cells text field
+            parent: Parent cell (if there is one)
+            source: Source of the arrow. Can either be another Cell or a Point
+            target: Target of the arrow. Can either be another Cell or a Point
+            waypoints: Additional points the arrow goes through between source and target
         """
         super().__init__(cell_id, style, value, parent)
         self.source = source
@@ -47,8 +48,11 @@ class ArrowCell(Cell):
         """
         Determine if this object is fully contained within the other one.
 
-        :param other: Container defining the boundary this object needs to be fully enclosed by
-        :return:
+        Args:
+            other: Container defining the boundary this object needs to be fully enclosed by
+
+        Returns:
+            True if this object lies completely within the boundary of other, False otherwise
         """
         return self.source.fits_inside(other) and self.target.fits_inside(other)
 
@@ -56,7 +60,8 @@ class ArrowCell(Cell):
         """
         Create an XML structure representing this class.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
         base = super().to_xml()
         base.attrs["edge"] = "1"
@@ -100,11 +105,16 @@ class ArrowCell(Cell):
         """
         Create a ArrowCell from the given xml data.
 
-        :param data: XML tag to create the ArrowCell from
-        :param existing_cells: Cells already parsed from the XML document
-        :param layers: Layers parsed from the XML document
-        :return: The created ArrowCell
-        :raises XmlDecodingError: If any of the required attributes is missing
+        Args:
+            data: XML tag to create the ArrowCell from
+            existing_cells: Cells already parsed from the XML document
+            layers: Layers parsed from the XML document
+
+        Returns:
+            The created ArrowCell
+
+        Raises:
+            XmlDecodingError: If any of the required attributes is missing
         """
         cell_id = get_string_attribute(data, "id")
         parent = cls._decode_parent(data, existing_cells, layers)

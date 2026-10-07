@@ -28,8 +28,8 @@ DUMMY_DATA = """
     </mxGraphModel>
   </diagram>
   <diagram id="R75-8NS8Kljy3cZdzqBM" name="wireframes">
-    <mxGraphModel dx="1220" dy="902" grid="1" gridSize="10" guides="1" tooltips="1"
-                  connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827"
+    <mxGraphModel dx="1220" dy="902" grid="1" gridSize="10" guides="1" tooltips="1" 
+                  connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" 
                   pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
