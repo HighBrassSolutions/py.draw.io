@@ -15,6 +15,18 @@ def test_to_string():
     assert "1 cells" in str(layer)
 
 
+def test_constructor_sets_parent():
+    """Test that the layer is set as parent of the cells it is constructed with"""
+
+    cell1 = DummyCell("c1", {}, None, None)  # type: ignore[arg-type]
+    cell2 = DummyCell("c2", {}, None, None)  # type: ignore[arg-type]
+    assert cell1.parent is None
+
+    layer = Layer(CellCollection([cell1, cell2]), "msg")
+    assert cell1.parent is layer
+    assert cell2.parent is layer
+
+
 def test_to_xml():
     """Test the XML serialization"""
 
