@@ -1,11 +1,11 @@
 """Helper functions for py_draw_io."""
-from typing import Optional
+
 from bs4 import Tag
 
 from py_draw_io.errors import XmlDecodingError
 
 
-def get_string_attribute(data: Tag, key: str, default: Optional[str] = None) -> str:
+def get_string_attribute(data: Tag, key: str, default: str | None = None) -> str:
     """
     Grabs the attribute from the passed tag and makes sure it is a string.
 
@@ -25,7 +25,7 @@ def get_string_attribute(data: Tag, key: str, default: Optional[str] = None) -> 
     return value
 
 
-def get_optional_string_attribute(data: Tag, key: str) -> Optional[str]:
+def get_optional_string_attribute(data: Tag, key: str) -> str | None:
     """
     Grabs the attribute from the passed tag and makes sure it is either a string or does not exist.
 

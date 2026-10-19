@@ -1,5 +1,6 @@
 """Module for the Point class."""
 from __future__ import annotations
+
 from .boundary_container import BoundaryContainer
 from .fittable import Fittable
 
@@ -10,7 +11,7 @@ class Point(Fittable):
     x: float
     y: float
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float, y: float) -> None:
         """
         Create a new instance of the Point class.
 

@@ -16,7 +16,7 @@ def test_file_not_found(tmp_path):
 
 def test_first_add(tmp_path):
     source1 = tmp_path / "source1.json"
-    with open(source1, "w") as file_p:
+    with source1.open("w") as file_p:
         file_p.write("yolo")
 
     target1 = tmp_path / "target1.png"
@@ -33,13 +33,13 @@ def test_first_add(tmp_path):
 
 def test_different_hash(tmp_path):
     source1 = tmp_path / "source1.json"
-    with open(source1, "w") as file_p:
+    with source1.open("w") as file_p:
         file_p.write("yolo")
 
     target1 = tmp_path / "target1.png"
 
     cache_file = tmp_path / "cache.json"
-    with open(cache_file, "w") as file_p:
+    with cache_file.open("w") as file_p:
         json.dump({
             "created": "2026-04-17T08:06:20.412456",
             "updated": "2026-04-17T08:06:20.412526",
@@ -47,10 +47,10 @@ def test_different_hash(tmp_path):
                 source1.as_posix(): {
                     "hash": "yolo123",
                     "files": [
-                        target1.as_posix()
-                    ]
-                }
-            }
+                        target1.as_posix(),
+                    ],
+                },
+            },
         }, file_p)
 
     cache = CacheFile.load(cache_file)

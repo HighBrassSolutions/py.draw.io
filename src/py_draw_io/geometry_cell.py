@@ -1,15 +1,16 @@
 """Module for the GeometryCell."""
 from __future__ import annotations
-from typing import Optional, Dict, Union, List
-from bs4 import Tag
+
 from typing import TYPE_CHECKING
 
+from bs4 import Tag
+
 from py_draw_io.boundary_container import BoundaryContainer
+from py_draw_io.cell import Cell
 from py_draw_io.errors import XmlDecodingError
-from py_draw_io.helpers import get_string_attribute, get_optional_string_attribute
+from py_draw_io.helpers import get_optional_string_attribute, get_string_attribute
 from py_draw_io.layer import Layer
 from py_draw_io.point import Point
-from py_draw_io.cell import Cell
 
 if TYPE_CHECKING:
     from py_draw_io.cell_collection import CellCollection
@@ -21,8 +22,8 @@ class GeometryCell(Cell, BoundaryContainer):
     top_left: Point
     bottom_right: Point
 
-    def __init__(self, cell_id: str, style: Optional[Dict[str, Union[int, str, None]]], value: Optional[str],
-                 parent: Union[Cell, Layer], top_left: Point, bottom_right: Point):
+    def __init__(self, cell_id: str, style: dict[str, int | str | None] | None, value: str | None,
+                 parent: Cell | Layer, top_left: Point, bottom_right: Point) -> None:
         """
         Create a new instance for the ArrowCell class.
 
@@ -94,7 +95,7 @@ class GeometryCell(Cell, BoundaryContainer):
         return base
 
     @classmethod
-    def from_xml(cls, data: Tag, existing_cells: CellCollection, layers: List[Layer]) -> GeometryCell:
+    def from_xml(cls, data: Tag, existing_cells: CellCollection, layers: list[Layer]) -> GeometryCell:
         """
         Create a GeometryCell from the given xml data.
 
@@ -112,7 +113,7 @@ class GeometryCell(Cell, BoundaryContainer):
         geometry_data = data.find_all("mxGeometry")
         if len(geometry_data) > 1:
             raise XmlDecodingError("Found more than one geometry")
-        elif len(geometry_data) == 0:
+        if len(geometry_data) == 0:
             raise XmlDecodingError("Found no geometry data")
 
         geometry_tag = geometry_data[0]
@@ -130,5 +131,4 @@ class GeometryCell(Cell, BoundaryContainer):
         bottom_right = Point(top_left.x + float(get_string_attribute(geometry_tag, "width")),
                              top_left.y + float(get_string_attribute(geometry_tag, "height")))
 
-        out = GeometryCell(cell_id, style, value, parent, top_left, bottom_right)
-        return out
+        return GeometryCell(cell_id, style, value, parent, top_left, bottom_right)
