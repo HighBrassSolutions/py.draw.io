@@ -34,7 +34,7 @@ jobs:
           poetry install
 
       - name: Run mypy type-checks
-        run: poetry run mypy src/py_draw_io --txt-report=artifacts
+        run: poetry run mypy . --txt-report=artifacts
 
       - name: Show Report
         run: cat artifacts/index.txt
@@ -60,4 +60,4 @@ jobs:
           poetry install
 
       - name: Run ruff code-style-checks
-        run: poetry run ruff check src/py_draw_io
+        run: poetry run ruff check .

@@ -23,7 +23,8 @@ def test_to_string():
 def test_from_xml_success():
     data = create_tag("""
     <diagram id="diag1" name="data">
-        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                      page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
           <root>
             <mxCell id="0" />
             <mxCell id="1" parent="0" />
@@ -67,9 +68,11 @@ def test_from_xml_success():
 def test_from_xml_two_graph_models():
     data = create_tag("""
     <diagram id="diag1" name="data">
-        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                      page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
         </mxGraphModel>
-        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                      page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
         </mxGraphModel>
       </diagram>
     """, "diagram")
@@ -81,7 +84,8 @@ def test_from_xml_two_graph_models():
 def test_multiple_base_cells():
     data = create_tag("""
         <diagram id="diag1" name="data">
-            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1"
+                          fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
               <root>
                 <mxCell id="0" />
                 <mxCell id="55" />
@@ -115,7 +119,8 @@ def test_from_xml_no_graph_models():
 def test_from_xml_missing_reference_cells():
     data = create_tag("""
         <diagram id="diag1" name="data">
-            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1"
+                          fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
               <root>
                 <mxCell id="0" />
                 <mxCell id="1" parent="0" />
@@ -137,7 +142,8 @@ def test_from_xml_missing_reference_cells():
 def test_from_xml_broken_cell():
     data = create_tag("""
         <diagram id="diag1" name="data">
-            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <mxGraphModel dx="364" dy="269" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1"
+                          fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
               <root>
                 <mxCell id="0" />
                 <mxCell id="1" parent="0" />
@@ -164,7 +170,6 @@ def test_to_xml():
     geometries = xml_data.find_all("mxGeometry")
     assert len(geometries) == 2
 
-    # diags = xml_data.find_all("diagram")
     assert xml_data.name == "diagram"
     assert xml_data.attrs["id"] == "diag_id"
     assert xml_data.attrs["name"] == "test_diag"

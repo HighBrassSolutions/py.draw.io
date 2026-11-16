@@ -1,10 +1,10 @@
-import os
+from __future__ import annotations
+
+import datetime
 import shutil
 from pathlib import Path
-from typing import Optional
 
 import pytest
-import datetime
 
 from py_draw_io import SETTINGS
 
@@ -12,18 +12,18 @@ SETTINGS.use_cache = False
 
 
 class Timer:
-    start: Optional[datetime.datetime]
-    end: Optional[datetime.datetime]
+    start: datetime.datetime | None
+    end: datetime.datetime | None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start = None
         self.end = None
 
-    def __enter__(self):
+    def __enter__(self) -> Timer:
         self.start = datetime.datetime.now()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *_: object) -> None:
         self.end = datetime.datetime.now()
 
     @property
@@ -36,6 +36,6 @@ class Timer:
 @pytest.fixture()
 def temp_dir():
     temp = Path("temp")
-    os.makedirs(temp, exist_ok=True)
+    temp.mkdir(parents=True, exist_ok=True)
     yield temp
     shutil.rmtree(temp)

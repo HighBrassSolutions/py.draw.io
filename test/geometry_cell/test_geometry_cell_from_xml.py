@@ -1,21 +1,21 @@
 import pytest
-from bs4 import BeautifulSoup
 
 from py_draw_io.cell_collection import CellCollection
 from py_draw_io.errors import XmlDecodingError
 from py_draw_io.geometry_cell import GeometryCell
 from py_draw_io.layer import Layer
 from py_draw_io.point import Point
+from test.helpers import create_tag
 
 
 def test_missing_attribute_vertex():
     """Test the decoding of a cell with a missing vertex attribute"""
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" value="" parent="test_layer">
           <mxGeometry height="32.5" width="150" x="311.25" y="358.75" as="geometry" />
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
     with pytest.raises(XmlDecodingError) as err:
         _ = GeometryCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
@@ -25,10 +25,10 @@ def test_missing_attribute_vertex():
 def test_missing_geometry():
     """Test the decoding of a cell with a missing geometry tag"""
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" value="" vertex="1" parent="test_layer">
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
     with pytest.raises(XmlDecodingError) as err:
         _ = GeometryCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
@@ -38,12 +38,12 @@ def test_missing_geometry():
 def test_multiple_geometries():
     """Test the decoding of a cell with multiple geometry tags"""
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" value="" vertex="1" parent="test_layer">
         <mxGeometry height="32.5" width="150" x="311.25" y="358.75" as="geometry" />
         <mxGeometry height="32.5" width="150" x="311.25" y="358.75" as="geometry" />
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
     with pytest.raises(XmlDecodingError) as err:
         _ = GeometryCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
@@ -53,11 +53,11 @@ def test_multiple_geometries():
 def test_multiple_success():
     """Test the normal decoding of a geometry cell"""
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" value="" vertex="1" parent="test_layer">
         <mxGeometry height="32.5" width="150" x="300.2" y="400.5" as="geometry" />
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
     cell = GeometryCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
     assert cell.top_left == Point(300.2, 400.5)
@@ -67,15 +67,16 @@ def test_multiple_success():
 def test_with_geometry_parent():
     """Test the normal decoding of a geometry cell"""
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" value="" vertex="1" parent="parent_c">
         <mxGeometry height="2" width="3" x="1" y="4" as="geometry" />
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
-    parent = GeometryCell("parent_c", {}, "", None, Point(10, 10), Point(20, 20))
+    layer = Layer(CellCollection(), "test_layer", None)
+    parent = GeometryCell("parent_c", {}, "", layer, Point(10, 10), Point(20, 20))
 
-    cell = GeometryCell.from_xml(data, CellCollection([parent]), [Layer(CellCollection(), "test_layer", None)])
+    cell = GeometryCell.from_xml(data, CellCollection([parent]), [layer])
     assert cell.top_left == Point(11, 14)
     assert cell.bottom_right == Point(14, 16)
 
@@ -83,20 +84,20 @@ def test_with_geometry_parent():
 def test_attribute_value():
     """Test the decoding of the value attribute"""
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" vertex="1" parent="test_layer">
         <mxGeometry height="32.5" width="150" x="300.2" y="400.5" as="geometry" />
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
     cell = GeometryCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
     assert cell.value is None
 
-    data = BeautifulSoup("""
+    data = create_tag("""
         <mxCell id="test1" style="" vertex="1" value="yolo" parent="test_layer">
         <mxGeometry height="32.5" width="150" x="300.2" y="400.5" as="geometry" />
         </mxCell>
-    """, "xml").find("mxCell")
+    """, "mxCell")
 
     cell = GeometryCell.from_xml(data, CellCollection(), [Layer(CellCollection(), "test_layer", None)])
     assert cell.value == "yolo"

@@ -1,5 +1,5 @@
-from py_draw_io import Settings
 from py_draw_io.cache import FileCache
+from py_draw_io.settings import Settings
 
 
 def test_settings(tmp_path):

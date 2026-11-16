@@ -1,5 +1,6 @@
 from typing import cast
-from bs4 import Tag, BeautifulSoup
+
+from bs4 import BeautifulSoup, Tag
 
 from py_draw_io.boundary_container import BoundaryContainer
 from py_draw_io.point import Point
@@ -13,5 +14,4 @@ class DummyBoundaryContainer(BoundaryContainer):
 
 def create_tag(xml: str, tag_name: str) -> Tag:
     soup = BeautifulSoup(xml, "xml")
-    tag = cast(Tag, soup.find(tag_name))
-    return tag
+    return cast(Tag, soup.find(tag_name))
