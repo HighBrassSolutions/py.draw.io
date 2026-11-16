@@ -1,5 +1,7 @@
 site_name: py.draw.io
 site_description: Allows for the creation, manipulation and export of draw.io diagrams in python
+site_url: https://highbrasssolutions.github.io/py.draw.io/
+repo_url: https://github.com/HighBrassSolutions/py.draw.io
 site_dir: artifacts/docs
 docs_dir: docs
 

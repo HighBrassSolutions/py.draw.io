@@ -22,7 +22,7 @@ each section of a document, without maintaining a copy of the diagram per image.
 py.draw.io requires Python 3.10 or newer. It is not published on PyPI yet, so install it from GitHub:
 
 ```shell
-pip install git+https://github.com/ShotLab/py.draw.io.git
+pip install git+https://github.com/HighBrassSolutions/py.draw.io.git
 ```
 
 ### Installing draw.io
@@ -87,6 +87,8 @@ The documentation explains how to create and edit diagrams, how partial exports 
 how the library is structured.
 
 ## Documentation
+
+The documentation is published at https://highbrasssolutions.github.io/py.draw.io/ and redeployed on every push to `master`.
 
 The documentation is built with [MkDocs](https://www.mkdocs.org/). It contains a usage guide, an architecture
 overview generated from the code, and an API reference generated from the docstrings:
