@@ -32,10 +32,11 @@ class Cell(Fittable, ABC):
         """
         Create a new instance of the Cell class.
 
-        :param cell_id: ID of the cell
-        :param style: Styling information for the cell
-        :param value: Content of the cells text field
-        :param parent: Parent cell (if there is one)
+        Args:
+            cell_id: ID of the cell
+            style: Styling information for the cell
+            value: Content of the cells text field
+            parent: Parent cell (if there is one)
         """
         self.id = cell_id
         self.style = style
@@ -83,7 +84,8 @@ class Cell(Fittable, ABC):
         """
         Create an XML structure representing this class.
 
-        :return: The created XML tag
+        Returns:
+            The created XML tag
         """
         out = Tag(name="mxCell")
         out.attrs["id"] = self.id
